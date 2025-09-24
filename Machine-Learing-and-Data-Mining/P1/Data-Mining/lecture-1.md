@@ -114,7 +114,7 @@ d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}
  ```
 
 
-```
+```mermaid
 graph TD
   A[Data Point 1] -->|Compare| C[Distance Metric]
   B[Data Point 2] -->|Compare| C[Distance Metric]
@@ -149,7 +149,7 @@ Lift(A \Rightarrow B) = \frac{Conf(A \Rightarrow B)}{Support(B)}
 ]
 ```
 
-```
+```mermaid
 flowchart LR
   A[Transaction Dataset] --> B[Frequent Itemset Mining (Apriori/FP-Growth)]
   B --> C[Generate Association Rules]
@@ -181,7 +181,7 @@ J = \sum_{i=1}^k \sum_{x \in C_i} |x - \mu_i|^2
 ```
 
 
-```
+```mermaid
 flowchart TD
   A[Data Points] --> B[Choose K Clusters]
   B --> C[Assign Points to Nearest Centroid]
@@ -227,7 +227,7 @@ Gini(D) = 1 - \sum_{i=1}^m p_i^2
 ```
 
 
-```
+```mermaid
 flowchart TD
   A[Training Data] --> B[Choose Algorithm]
   B --> C{Model Type?}
@@ -278,7 +278,7 @@ Z = XW
 ```
 
 
-```
+```mermaid
 flowchart TD
   A[High-Dimensional Data] --> B[Compute Covariance Matrix]
   B --> C[Eigen Decomposition]
@@ -311,7 +311,7 @@ F1 = \frac{2 \cdot Prec \cdot Rec}{Prec+Rec}
 ```
 
 
-```
+```mermaid
 flowchart LR
   A[Predicted Positive] -->|True| B[TP]
   A -->|False| C[FP]
