@@ -53,3 +53,278 @@ Business analysts use OLAP tools to interact with the OLAP cube. They perform op
 
 
 <img width="1456" height="1022" alt="image" src="https://github.com/user-attachments/assets/33b49c50-88b0-418c-932e-254be7553ced" />
+
+
+
+# 📘 Data Mining – Theory + Practice Guide (with Visuals)
+
+This guide combines **math formulas**, **Python implementations**, and **visual diagrams** for major data mining topics.  
+Use it as a reference for both **course exams** and **hands-on projects**.
+
+---
+
+## 🔹 1. Data Preprocessing
+
+### Math Intuition
+- Standardization (z-score):
+\[
+z = \frac{x - \mu}{\sigma}
+\]
+
+- Min-Max Scaling:
+\[
+x' = \frac{x - \min(x)}{\max(x) - \min(x)}
+\]
+
+### Diagram
+```mermaid
+flowchart LR
+  A[Raw Data] --> B[Handle Missing Values]
+  B --> C[Scaling / Normalization]
+  C --> D[Encoding Categorical Features]
+  D --> E[Preprocessed Data]
+  ```
+
+```
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+df = pd.DataFrame({"age":[25,30,35,None],
+                   "income":[50000,60000,75000,80000]})
+
+df["age"].fillna(df["age"].median(), inplace=True)
+
+scaler = StandardScaler()
+df[["age", "income"]] = scaler.fit_transform(df[["age", "income"]])
+print(df)
+```
+
+ 2. Similarity & Distance
+
+ ```
+	•	Euclidean Distance
+[
+d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}
+]
+	•	Cosine Similarity
+[
+\cos(x,y) = \frac{x \cdot y}{|x||y|}
+]
+
+ ```
+
+
+```
+graph TD
+  A[Data Point 1] -->|Compare| C[Distance Metric]
+  B[Data Point 2] -->|Compare| C[Distance Metric]
+  C --> D[Similarity Score]
+
+```
+
+```
+from sklearn.metrics.pairwise import euclidean_distances, cosine_similarity
+import numpy as np
+
+X = np.array([[1,2],[2,3],[3,4]])
+print("Euclidean:\n", euclidean_distances(X))
+print("Cosine:\n", cosine_similarity(X))
+
+```
+
+3. Association Rule Mining
+
+```
+	•	Support:
+[
+Support(A) = \frac{|Transactions(A)|}{|Total Transactions|}
+]
+	•	Confidence:
+[
+Conf(A \Rightarrow B) = \frac{Support(A \cup B)}{Support(A)}
+]
+	•	Lift:
+[
+Lift(A \Rightarrow B) = \frac{Conf(A \Rightarrow B)}{Support(B)}
+]
+```
+
+```
+flowchart LR
+  A[Transaction Dataset] --> B[Frequent Itemset Mining (Apriori/FP-Growth)]
+  B --> C[Generate Association Rules]
+  C --> D{Evaluate: Support, Confidence, Lift}
+```
+
+```
+from mlxtend.frequent_patterns import apriori, association_rules
+import pandas as pd
+
+data = {'milk':[1,0,1,1],'bread':[1,1,1,0],'butter':[0,1,1,1]}
+df = pd.DataFrame(data)
+
+frequent_itemsets = apriori(df, min_support=0.5, use_colnames=True)
+rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.7)
+print(rules)
+```
+
+
+4. Clustering
+
+```
+	•	K-Means Objective:
+[
+J = \sum_{i=1}^k \sum_{x \in C_i} |x - \mu_i|^2
+]
+	•	DBSCAN: Core point if ≥ MinPts within radius ( \varepsilon ).
+
+```
+
+
+```
+flowchart TD
+  A[Data Points] --> B[Choose K Clusters]
+  B --> C[Assign Points to Nearest Centroid]
+  C --> D[Recompute Centroids]
+  D --> B
+  B --> E[Final Clusters]
+
+
+```
+
+
+```
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+X = [[1,2],[1,4],[1,0],[10,2],[10,4],[10,0]]
+kmeans = KMeans(n_clusters=2, random_state=42).fit(X)
+
+print("Centers:", kmeans.cluster_centers_)
+print("Labels:", kmeans.labels_)
+
+plt.scatter([x[0] for x in X],[x[1] for x in X],c=kmeans.labels_)
+plt.show()
+```
+
+5. Classification
+
+```
+Math
+	•	Logistic Regression:
+[
+P(y=1|x) = \frac{1}{1 + e^{-(w^Tx + b)}}
+]
+	•	Naive Bayes:
+[
+P(C|x) = \frac{P(C)\prod_{i=1}^n P(x_i|C)}{P(x)}
+]
+	•	Decision Tree (Gini):
+[
+Gini(D) = 1 - \sum_{i=1}^m p_i^2
+]
+
+```
+
+
+```
+flowchart TD
+  A[Training Data] --> B[Choose Algorithm]
+  B --> C{Model Type?}
+  C -->|Logistic| D[Regression: Sigmoid Function]
+  C -->|Tree| E[Decision Tree: Splitting by Gini/Entropy]
+  C -->|Naive Bayes| F[Probabilistic Classification]
+  D --> G[Predictions]
+  E --> G
+  F --> G
+```
+
+
+
+```
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+iris = load_iris()
+X, y = iris.data, iris.target
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3,random_state=42)
+
+clf = DecisionTreeClassifier()
+clf.fit(X_train, y_train)
+
+y_pred = clf.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+```
+
+
+6. Dimensionality Reduction
+
+
+```
+
+Math
+	•	PCA Covariance Matrix:
+[
+\Sigma = \frac{1}{n} X^T X
+]
+	•	Projection:
+[
+Z = XW
+]
+
+```
+
+
+```
+flowchart TD
+  A[High-Dimensional Data] --> B[Compute Covariance Matrix]
+  B --> C[Eigen Decomposition]
+  C --> D[Select Top K Eigenvectors]
+  D --> E[Reduced-Dimensional Data]
+```
+
+
+7. Evaluation Metrics
+
+```
+Math
+	•	Accuracy:
+[
+Acc = \frac{TP+TN}{TP+TN+FP+FN}
+]
+	•	Precision:
+[
+Prec = \frac{TP}{TP+FP}
+]
+	•	Recall:
+[
+Rec = \frac{TP}{TP+FN}
+]
+	•	F1 Score:
+[
+F1 = \frac{2 \cdot Prec \cdot Rec}{Prec+Rec}
+]
+
+```
+
+
+```
+flowchart LR
+  A[Predicted Positive] -->|True| B[TP]
+  A -->|False| C[FP]
+  D[Predicted Negative] -->|True| E[TN]
+  D -->|False| F[FN]
+  B & C & E & F --> G[Metrics: Accuracy, Precision, Recall, F1]
+
+```
+
+
+
+```
+
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred))
+```
