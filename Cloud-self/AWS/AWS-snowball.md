@@ -93,3 +93,21 @@ AWS Snowball is a physical data transfer service that helps move large amounts o
 - Geographic availability varies
 - Import/export restrictions in some countries
 - Device availability subject to AWS supply
+- 
+
+
+-----------
+
+
+
+
+## Steps:
+
+When requesting a device there are several steps including configuring: Job type, Compute and storage, Features and options, as well as Security, shipping and notification preferences. We'll be reviewing the first two steps in the process.
+
+Provide a name for the data transfer job, such as 'MyFirstImport'
+For job type, we'll set it to Import into Amazon S3.
+Navigate to Step 2, Compute and Storage. In this section is where you would typically configure what type of device you want based on factors such as Compute (CPUs/GPUs), Memory, Storage (HDD) and Storage (SDD).
+Further down the page, you can also select the destination you would like your data transferred to. You can select an already available bucket in your organization, alternatively you can create a new one.
+Now we can cancel out of the Snowball job creation process, and look at other services.
+
