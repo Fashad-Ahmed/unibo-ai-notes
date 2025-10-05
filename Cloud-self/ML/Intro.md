@@ -49,15 +49,15 @@ You train the model to predict house prices based on area.
 
 #### 📊 Diagram
 
-```
-mermaid
+```mermaid
 flowchart LR
-    A[Input Data (X)] --> B[Model Training]
-    B --> C[Predicted Output (Y')]
-    D[True Output (Y)] --> B
-    C --> E[Compare Y' vs Y]
-    E --> F[Adjust Parameters]
+    A["Input Data (X)"] --> B["Model Training"]
+    B --> C["Predicted Output (Y')"]
+    D["True Output (Y)"] --> B
+    C --> E["Compare Y' vs Y"]
+    E --> F["Adjust Parameters"]
 ```
+
 
 #### 📦 Common Algorithms
 
