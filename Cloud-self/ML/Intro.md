@@ -49,7 +49,8 @@ You train the model to predict house prices based on area.
 
 #### 📊 Diagram
 
-```mermaid
+```
+mermaid
 flowchart LR
     A[Input Data (X)] --> B[Model Training]
     B --> C[Predicted Output (Y')]
