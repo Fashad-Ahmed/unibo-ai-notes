@@ -6,3 +6,4 @@ ML:-
 
 - https://archive.ics.uci.edu/
 - http://14.139.161.31/OddSem-0822-1122/Hands-On_Machine_Learning_with_Scikit-Learn-Keras-and-TensorFlow-2nd-Edition-Aurelien-Geron.pdf
+- https://github.com/jakevdp/PythonDataScienceHandbook
