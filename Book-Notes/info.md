@@ -1,0 +1,1 @@
+This directory contains all the notes related every book I will read.
