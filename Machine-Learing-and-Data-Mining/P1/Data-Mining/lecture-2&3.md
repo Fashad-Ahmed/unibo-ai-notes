@@ -282,3 +282,285 @@ Visualizes the transformation from "Fragmented Operational Data" (Chaos) to an "
 
 
 ---
+
+
+In the **Dimensional Fact Model (DFM)**, the structure is designed to be intuitive for both technical teams and business managers by organizing data around specific business events.
+
+### **Important Elements of DFM**
+
+The DFM is a graphical formalism that uses several core building blocks to represent a multidimensional database:
+
+* **Facts**: These are the central focus of the analysis, representing a business process or event (e.g., a "Sale" or "Inventory Snapshot").
+* **Measures**: These are numerical properties of a fact that can be quantified and aggregated (e.g., *Revenue*, *Quantity Sold*, or *Profit*).
+* **Dimensions**: These are the coordinates or "perspectives" used to analyze a fact (e.g., *Time*, *Product*, or *Store*).
+* **Hierarchies**: These exist within dimensions to allow for "drill-down" analysis. For example, a Time dimension might follow a hierarchy of .
+* **Dimensional Attributes**: Descriptive properties within a hierarchy (e.g., *Brand* or *Category* for a product).
+
+---
+
+### **What is the "Grain"?**
+
+The **Grain** is perhaps the most critical definition in a data warehouse because it specifies exactly **what a single row in a fact table represents**.
+
+* **The Level of Detail**: It determines the "finest level of detail" available for analysis. A "finer" grain provides more detail (e.g., every individual transaction line), while a "coarser" grain is more summarized (e.g., daily totals per store).
+* **Consistency**: Declaring the grain upfront ensures that all dimensions and measures are consistent; you cannot mix different levels of detail (like a daily total and a single transaction) in the same fact table.
+
+#### **Examples of Grains from your Case Study:**
+
+| Fact Table | Declared Grain |
+| --- | --- |
+| **Sales Fact** | One line item per transaction |
+| **Inventory Fact** | One product-store per day (Daily Snapshot) |
+| **Promotion Fact** | One promotion-event per product per store |
+
+
+
+A **star schema** is a data modeling technique used in **data warehouses** and **BI systems** to organize data for fast, simple querying.
+
+---
+
+## What it is
+
+It’s called a *star* because the structure looks like one:
+
+* **One central fact table**
+* **Multiple surrounding dimension tables**
+* The fact table connects to each dimension via **foreign keys**
+* Dimension tables are **not connected to each other**
+
+```
+        Time
+          |
+Product — Fact_Sales — Customer
+          |
+        Store
+```
+
+---
+
+## Components
+
+### 1. Fact Table (center)
+
+Contains:
+
+* **Measures** (numeric, aggregatable values)
+
+  * e.g. `sales_amount`, `quantity`, `profit`
+* **Foreign keys** to dimension tables
+
+Example:
+
+```
+Fact_Sales
+-----------
+date_id
+product_id
+customer_id
+store_id
+sales_amount
+quantity
+```
+
+---
+
+### 2. Dimension Tables (edges)
+
+Contain:
+
+* **Descriptive attributes**
+* Usually **denormalized**
+* Used for filtering, grouping, and labeling
+
+Example:
+
+```
+Dim_Product
+-----------
+product_id
+product_name
+category
+brand
+```
+
+---
+
+## Example (Retail)
+
+* **Fact table**: `Fact_Sales`
+* **Dimensions**:
+
+  * `Dim_Date`
+  * `Dim_Product`
+  * `Dim_Customer`
+  * `Dim_Store`
+
+Typical query:
+
+> Total sales by product category and month
+
+Star schema makes this fast and readable.
+
+---
+
+## Advantages
+
+✅ Simple to understand
+✅ Faster queries (fewer joins)
+✅ Ideal for OLAP and reporting
+✅ Works well with BI tools (Power BI, Tableau, Looker)
+
+---
+
+## Disadvantages
+
+❌ Data redundancy in dimensions
+❌ Less flexible for very complex relationships
+❌ Not ideal for highly normalized transactional systems (OLTP)
+
+---
+
+## Star Schema vs Snowflake Schema
+
+| Star Schema             | Snowflake Schema      |
+| ----------------------- | --------------------- |
+| Denormalized dimensions | Normalized dimensions |
+| Simpler                 | More complex          |
+| Faster queries          | More joins            |
+| More storage            | Less storage          |
+
+---
+
+
+A **snowflake schema** is a data warehouse modeling technique that’s an extension of the **star schema**, where **dimension tables are normalized into multiple related tables**. The structure resembles a **snowflake** due to its branching shape.
+
+---
+
+## What it is
+
+* **Fact table** in the center
+* **Dimensions split into sub-dimensions**
+* More **joins** than a star schema
+* Reduced **data redundancy**
+
+```
+             Dim_Year
+                |
+Dim_Month — Dim_Date — Fact_Sales — Dim_Product
+                                |
+                           Dim_Category
+                                |
+                           Dim_Department
+```
+
+---
+
+## Components
+
+### 1. Fact Table
+
+Contains:
+
+* **Measures** (numeric values)
+* **Foreign keys** to dimension tables
+
+Example:
+
+```
+Fact_Sales
+-----------
+date_id
+product_id
+store_id
+sales_amount
+quantity
+```
+
+---
+
+### 2. Dimension Tables (Normalized)
+
+Dimensions are broken into multiple tables to remove redundancy.
+
+Example (Product dimension):
+
+```
+Dim_Product
+-----------
+product_id
+product_name
+category_id
+
+Dim_Category
+------------
+category_id
+category_name
+department_id
+
+Dim_Department
+--------------
+department_id
+department_name
+```
+
+---
+
+## Example Query
+
+> Total sales by department
+
+This requires more joins than a star schema:
+
+```sql
+SELECT d.department_name, SUM(f.sales_amount)
+FROM Fact_Sales f
+JOIN Dim_Product p ON f.product_id = p.product_id
+JOIN Dim_Category c ON p.category_id = c.category_id
+JOIN Dim_Department d ON c.department_id = d.department_id
+GROUP BY d.department_name;
+```
+
+---
+
+## Advantages
+
+✅ Reduced data redundancy
+✅ Smaller dimension tables
+✅ Easier to maintain hierarchical dimensions
+✅ Better data integrity
+
+---
+
+## Disadvantages
+
+❌ More complex queries
+❌ Slower performance due to many joins
+❌ Harder for business users to understand
+❌ Less BI-tool friendly than star schema
+
+---
+
+## Snowflake vs Star Schema
+
+| Snowflake Schema      | Star Schema             |
+| --------------------- | ----------------------- |
+| Normalized dimensions | Denormalized dimensions |
+| Less storage          | More storage            |
+| More joins            | Fewer joins             |
+| Slower queries        | Faster queries          |
+| More complex          | Simpler                 |
+
+---
+
+## When to use Snowflake Schema
+
+✔ Large dimensions with clear hierarchies
+✔ Storage optimization is critical
+✔ Strong data governance needs
+✔ Dimensions change frequently
+
+---
+
+
+
+
