@@ -930,4 +930,32 @@ x_{\text{scaled}} = \frac{100 - 13.5}{46.5} ≈ 1.87
  The F-test for linear regression tests whether any of the independent variables in a multiple linear regression model are significant.
 
 
+Good question! In the case of **decision trees** (and also other tree-based models like **random forests** or **gradient boosting**), **R²** isn't always the best measure of model performance for a few reasons:
+
+### 1. **Non-Linear Predictions**:
+
+* Decision trees and tree-based models don't assume a linear relationship between the features (independent variables) and the target (dependent variable). **R²** is primarily designed for linear models, so it can be misleading for non-linear models like decision trees. Trees capture non-linear relationships and complex interactions, which **R²** doesn't always reflect well.
+
+### 2. **Overfitting**:
+
+* Decision trees can easily overfit the training data, especially when they are allowed to grow too deep. In this case, **R²** might be very high on the training data but doesn't represent the model's true ability to generalize. **R²** might give an artificially good impression of how well the tree fits the data, which can be misleading if you're looking at performance on unseen data (e.g., validation/test set).
+
+### 3. **Interpretation Challenges**:
+
+* **R²** can sometimes be **negative** for models that are poor predictors. While this is technically a valid interpretation, it can be confusing, especially if you're comparing it to other models. In the case of trees, the model might perform worse than simply predicting the mean of the target variable, leading to a negative R², which doesn't always add much value when you're assessing the model.
+
+### 4. **Tree Models Don't Minimize R²**:
+
+* Decision trees are built to minimize the **impurity** of the nodes (using metrics like **Gini Index** or **Entropy** for classification, and **Mean Squared Error** for regression), not to maximize R². This means that R² is not the natural or primary evaluation metric for trees because trees optimize for different objectives.
+
+### What Metrics Are Better for Trees?
+
+For tree-based models, these are some of the more common metrics used:
+
+* **RMSE (Root Mean Squared Error)**: Gives a better sense of prediction accuracy (lower is better).
+* **MAE (Mean Absolute Error)**: Focuses on average error (also lower is better).
+* **MSE (Mean Squared Error)**: Similar to RMSE but without the square root (again, lower is better).
+* **Cross-Validation**: Ensures the model is generalizing well and not overfitting.
+
+In summary, while **R²** can still be used to evaluate decision trees, it's not the most informative or reliable metric, especially when the model involves non-linear relationships and complex interactions. Instead, focusing on **RMSE**, **MAE**, or **MSE** will give you a more accurate idea of how well your tree-based model is performing.
 
