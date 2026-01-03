@@ -2054,3 +2054,4 @@ Ask these questions:
 Neither is “better” universally — the **context decides**.
 
 
+Adjusted R2 Score: https://www.kaggle.com/code/jyotiprasadpal/assessing-the-accuracy-with-r2-and-adjusted-r2
