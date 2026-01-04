@@ -2055,3 +2055,281 @@ Neither is “better” universally — the **context decides**.
 
 
 Adjusted R2 Score: https://www.kaggle.com/code/jyotiprasadpal/assessing-the-accuracy-with-r2-and-adjusted-r2
+
+
+
+
+**PowerTransformer** is a preprocessing tool (commonly from **scikit-learn**) used to **transform numerical features so they become more Gaussian (normal-like)**.
+
+### What PowerTransformer does
+
+It:
+
+* Reduces **skewness**
+* Stabilizes **variance**
+* Makes data better suited for models that assume normality (e.g., linear regression, logistic regression, SVM)
+
+### Methods used
+
+PowerTransformer supports two transformations:
+
+1. **Yeo–Johnson** (default)
+
+   * Works with **positive and negative values**
+   * Commonly used in practice
+
+2. **Box–Cox**
+
+   * Requires **strictly positive values**
+   * Often slightly stronger normalization when applicable
+
+### Why it’s useful
+
+Many ML algorithms perform better when:
+
+* Features are normally distributed
+* Variance is consistent across values
+
+Power transformations help:
+
+* Improve model performance
+* Speed up convergence
+* Reduce the impact of outliers
+
+### Example (Python – scikit-learn)
+
+```python
+from sklearn.preprocessing import PowerTransformer
+
+pt = PowerTransformer(method='yeo-johnson')
+X_transformed = pt.fit_transform(X)
+```
+
+For Box–Cox:
+
+```python
+pt = PowerTransformer(method='box-cox')
+X_transformed = pt.fit_transform(X)
+```
+
+### Key points
+
+* Applied **feature-wise**
+* Learns a **lambda (λ)** parameter for each feature
+* Should be **fit on training data only**, then applied to test data
+* Often combined with `StandardScaler` (though PowerTransformer already standardizes by default)
+
+### When to use it
+
+* Data is **highly skewed**
+* Linear models or distance-based models are used
+* You want to improve normality of continuous features
+
+
+**`ParameterGrid`** is a utility from **scikit-learn** used to **generate all possible combinations of hyperparameters** for model tuning.
+
+It’s commonly used for **manual grid search** or when you want more control than `GridSearchCV`.
+
+---
+
+### What `ParameterGrid` does
+
+Given a dictionary of parameters, it creates:
+
+> **Every possible combination** of parameter values
+
+### Example
+
+```python
+from sklearn.model_selection import ParameterGrid
+
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [5, 10],
+    'learning_rate': [0.01, 0.1]
+}
+
+grid = ParameterGrid(param_grid)
+
+for params in grid:
+    print(params)
+```
+
+### Output (combinations)
+
+```
+{'learning_rate': 0.01, 'max_depth': 5,  'n_estimators': 100}
+{'learning_rate': 0.01, 'max_depth': 5,  'n_estimators': 200}
+{'learning_rate': 0.01, 'max_depth': 10, 'n_estimators': 100}
+{'learning_rate': 0.01, 'max_depth': 10, 'n_estimators': 200}
+{'learning_rate': 0.1,  'max_depth': 5,  'n_estimators': 100}
+{'learning_rate': 0.1,  'max_depth': 5,  'n_estimators': 200}
+{'learning_rate': 0.1,  'max_depth': 10, 'n_estimators': 100}
+{'learning_rate': 0.1,  'max_depth': 10, 'n_estimators': 200}
+```
+
+---
+
+### Why use `ParameterGrid`
+
+* Full control over training loop
+* Combine with **custom evaluation**
+* Use with **pipelines**
+* Lightweight alternative to `GridSearchCV`
+
+---
+
+### ParameterGrid vs GridSearchCV
+
+| Feature                | ParameterGrid | GridSearchCV |
+| ---------------------- | ------------- | ------------ |
+| Generates combinations | ✅             | ✅            |
+| Trains model           | ❌ (you do it) | ✅            |
+| Cross-validation       | ❌ (manual)    | ✅            |
+| Custom logic           | ✅             | Limited      |
+
+---
+
+### Example with model training
+
+```python
+from sklearn.metrics import accuracy_score
+
+best_score = 0
+best_params = None
+
+for params in ParameterGrid(param_grid):
+    model = Model(**params)
+    model.fit(X_train, y_train)
+    preds = model.predict(X_val)
+    score = accuracy_score(y_val, preds)
+
+    if score > best_score:
+        best_score = score
+        best_params = params
+```
+
+---
+
+### Key points
+
+* Exhaustive search → can be **computationally expensive**
+* Total combinations = product of list lengths
+* Deterministic (unlike random search)
+
+
+
+**`GridSearchCV`** is a scikit-learn tool that **automatically finds the best hyperparameters** for a model by:
+
+> **Trying all parameter combinations + using cross-validation + selecting the best result**
+
+---
+
+## What GridSearchCV does
+
+1. Takes a **model**
+2. Takes a **parameter grid**
+3. Trains the model on **all parameter combinations**
+4. Uses **cross-validation (CV)** to evaluate each combination
+5. Returns the **best parameters and best model**
+
+---
+
+## Basic example
+
+```python
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVC
+
+param_grid = {
+    'C': [0.1, 1, 10],
+    'kernel': ['linear', 'rbf']
+}
+
+grid = GridSearchCV(
+    estimator=SVC(),
+    param_grid=param_grid,
+    cv=5,
+    scoring='accuracy'
+)
+
+grid.fit(X_train, y_train)
+```
+
+---
+
+## Key outputs
+
+After fitting:
+
+```python
+grid.best_params_
+grid.best_score_
+grid.best_estimator_
+```
+
+* `best_params_` → best hyperparameter combination
+* `best_score_` → best cross-validated score
+* `best_estimator_` → model already trained on full dataset
+
+---
+
+## Why use GridSearchCV
+
+* No manual loops
+* Built-in **cross-validation**
+* Reduces overfitting
+* Works with **pipelines**
+* Parallel execution with `n_jobs=-1`
+
+---
+
+## GridSearchCV vs ParameterGrid
+
+| Feature                | GridSearchCV | ParameterGrid |
+| ---------------------- | ------------ | ------------- |
+| Generates combinations | ✅            | ✅             |
+| Trains model           | ✅            | ❌             |
+| Cross-validation       | ✅            | ❌             |
+| Best model returned    | ✅            | ❌             |
+| Custom training logic  | Limited      | Full          |
+
+---
+
+## Using GridSearchCV with Pipelines
+
+```python
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('clf', LogisticRegression())
+])
+
+param_grid = {
+    'clf__C': [0.01, 0.1, 1, 10],
+    'clf__penalty': ['l2']
+}
+
+grid = GridSearchCV(pipe, param_grid, cv=5)
+grid.fit(X_train, y_train)
+```
+
+---
+
+## Important tips
+
+* **Expensive** for large grids → grows exponentially
+* Use `RandomizedSearchCV` if grid is large
+* Always fit on **training data only**
+* Choose proper `scoring` metric
+
+---
+
+### One-line summary
+
+👉 **GridSearchCV = automated hyperparameter tuning with cross-validation**
+
+
