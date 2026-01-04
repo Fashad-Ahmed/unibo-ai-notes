@@ -1051,4 +1051,150 @@ print(scores)
 ✔ Validating unsupervised results
 
 
+### Pair Confusion Matrix (also called *Pairwise Confusion Matrix*)
+
+A **pair confusion matrix** is an evaluation metric mainly used in **clustering** (unsupervised learning).
+It compares **pairs of data points** instead of individual labels.
+
+It answers the question:
+
+> *For every pair of samples, do the true labels and predicted clusters agree on whether they belong together or not?*
+
+---
+
+## 1. Why pair confusion matrix is needed
+
+In clustering:
+
+* Cluster labels are **arbitrary** (cluster 0 vs 1 has no inherent meaning)
+* Standard confusion matrices don’t work well
+
+So we evaluate clustering by looking at **pairs of points**.
+
+---
+
+## 2. Definition (pairwise view)
+
+For any pair of points ((i, j)), there are four possibilities:
+
+| Case   | True labels | Predicted clusters | Meaning                        |
+| ------ | ----------- | ------------------ | ------------------------------ |
+| **TP** | Same        | Same               | Correctly clustered together   |
+| **TN** | Different   | Different          | Correctly separated            |
+| **FP** | Different   | Same               | Incorrectly clustered together |
+| **FN** | Same        | Different          | Incorrectly separated          |
+
+---
+
+## 3. Pair Confusion Matrix Structure
+
+[
+\begin{bmatrix}
+TP & FP \
+FN & TN
+\end{bmatrix}
+]
+
+Where:
+
+* **TP (True Positive)**: same true class, same predicted cluster
+* **FP (False Positive)**: different true class, same cluster
+* **FN (False Negative)**: same true class, different clusters
+* **TN (True Negative)**: different true class, different clusters
+
+---
+
+## 4. Example (conceptual)
+
+True labels:
+
+```
+y_true = [0, 0, 1, 1]
+```
+
+Predicted clusters:
+
+```
+y_pred = [1, 1, 0, 0]
+```
+
+Even though cluster labels are swapped, **pairwise relationships are preserved**, so performance is perfect.
+
+This is why pair confusion matrix is useful.
+
+---
+
+## 5. Python example (scikit-learn)
+
+```python
+from sklearn.metrics.cluster import pair_confusion_matrix
+
+y_true = [0, 0, 1, 1]
+y_pred = [1, 1, 0, 0]
+
+pcm = pair_confusion_matrix(y_true, y_pred)
+print(pcm)
+```
+
+Output:
+
+```
+[[TP FP]
+ [FN TN]]
+```
+
+(Actual numbers depend on data size.)
+
+---
+
+## 6. Metrics derived from pair confusion matrix
+
+Using (TP, FP, FN, TN), we can compute:
+
+### Precision
+
+[
+\text{Precision} = \frac{TP}{TP + FP}
+]
+
+### Recall
+
+[
+\text{Recall} = \frac{TP}{TP + FN}
+]
+
+### F1-score
+
+[
+F1 = \frac{2TP}{2TP + FP + FN}
+]
+
+These are **pairwise precision/recall**, not classification ones.
+
+---
+
+## 7. Relation to other clustering metrics
+
+| Metric                | Uses pair confusion matrix? |
+| --------------------- | --------------------------- |
+| Rand Index            | ✅                           |
+| Adjusted Rand Index   | ✅                           |
+| Fowlkes–Mallows Index | ✅                           |
+| Mutual Information    | ❌                           |
+
+---
+
+## 8. When to use it
+
+Use **pair confusion matrix** when:
+
+* Evaluating clustering results
+* True labels are available
+* Label permutation should not affect evaluation
+
+---
+
+## 9. One-line exam definition
+
+> **A pair confusion matrix evaluates clustering by counting how pairs of samples are grouped or separated in true labels versus predicted clusters.**
 
