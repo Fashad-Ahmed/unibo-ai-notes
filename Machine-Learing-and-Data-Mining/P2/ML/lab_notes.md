@@ -2333,3 +2333,199 @@ grid.fit(X_train, y_train)
 👉 **GridSearchCV = automated hyperparameter tuning with cross-validation**
 
 
+
+
+## What is **K-Best** in Attribute (Feature) Selection?
+
+**K-Best** is a **filter-based feature selection method** where you:
+
+> **Score each feature independently** using a statistical test,
+> then **select the top K features** with the highest scores.
+
+In **scikit-learn**, this is implemented as **`SelectKBest`**.
+
+---
+
+# 1️⃣ Why Feature Selection?
+
+Feature selection helps:
+
+* Reduce overfitting
+* Improve model performance
+* Reduce training time
+* Improve interpretability
+
+K-Best is one of the **simplest and fastest** ways to do this.
+
+---
+
+# 2️⃣ Core Idea of K-Best
+
+### Step-by-step
+
+1. Take each feature (X_i)
+2. Measure its **relationship with the target (y)** using a score function
+3. Rank features by score
+4. Select the **top K** features
+
+⚠ Each feature is evaluated **independently** (no interaction considered).
+
+---
+
+# 3️⃣ Mathematical View
+
+Suppose you have:
+
+* (X = [x_1, x_2, \dots, x_n]) (features)
+* (y) (target)
+
+For each feature (x_i):
+
+[
+score_i = f(x_i, y)
+]
+
+Then select:
+
+[
+\text{Top } K = \arg\max_{K}(score_1, score_2, \dots, score_n)
+]
+
+---
+
+# 4️⃣ Common Score Functions (Very Important)
+
+### For Classification
+
+| Score Function        | Concept            |
+| --------------------- | ------------------ |
+| `chi2`                | Chi-square test    |
+| `f_classif`           | ANOVA F-test       |
+| `mutual_info_classif` | Mutual information |
+
+---
+
+### For Regression
+
+| Score Function           | Concept               |
+| ------------------------ | --------------------- |
+| `f_regression`           | Linear correlation    |
+| `mutual_info_regression` | Non-linear dependency |
+
+---
+
+# 5️⃣ Example (Classification)
+
+```python
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+
+selector = SelectKBest(score_func=f_classif, k=2)
+X_selected = selector.fit_transform(X, y)
+
+print("Selected feature indices:", selector.get_support(indices=True))
+```
+
+---
+
+# 6️⃣ Example (Using Chi-Square)
+
+⚠ Requires **non-negative features**.
+
+```python
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.preprocessing import MinMaxScaler
+
+X_scaled = MinMaxScaler().fit_transform(X)
+
+selector = SelectKBest(score_func=chi2, k=2)
+X_selected = selector.fit_transform(X_scaled, y)
+```
+
+---
+
+# 7️⃣ Example (Mutual Information)
+
+```python
+from sklearn.feature_selection import SelectKBest, mutual_info_classif
+
+selector = SelectKBest(mutual_info_classif, k=2)
+X_selected = selector.fit_transform(X, y)
+```
+
+---
+
+# 8️⃣ How K Is Chosen?
+
+### Methods:
+
+* Domain knowledge
+* Trial & error
+* Cross-validation
+* GridSearchCV
+
+```python
+from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+
+pipe = Pipeline([
+    ("select", SelectKBest(f_classif)),
+    ("model", LogisticRegression())
+])
+
+param_grid = {
+    "select__k": [2, 3, 4]
+}
+
+grid = GridSearchCV(pipe, param_grid, cv=5)
+grid.fit(X, y)
+```
+
+---
+
+# 9️⃣ Advantages of K-Best
+
+✔ Very fast
+✔ Simple & interpretable
+✔ Model-independent
+✔ Reduces dimensionality
+
+---
+
+# 🔟 Limitations (Important!)
+
+❌ Ignores feature interactions
+❌ Selected features may be redundant
+❌ Not optimal for highly correlated features
+
+---
+
+# 1️⃣1️⃣ K-Best vs Other Methods
+
+| Method | Type     | Uses Model |
+| ------ | -------- | ---------- |
+| K-Best | Filter   | ❌          |
+| RFE    | Wrapper  | ✔          |
+| Lasso  | Embedded | ✔          |
+
+---
+
+# 1️⃣2️⃣ Interview-Ready One-Liner ⭐
+
+> **K-Best selects the top K features based on statistical tests that measure each feature’s relationship with the target, independently of the model.**
+
+---
+
+# 🔑 Final Takeaway
+
+* K-Best is **simple, fast, and effective**
+* Best used as a **baseline feature selector**
+* Combine with **cross-validation** for best results
+* Not ideal when feature interactions matter
+
+
+
+
