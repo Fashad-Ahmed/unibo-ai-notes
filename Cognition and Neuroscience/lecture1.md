@@ -38,3 +38,46 @@ Key clinical examples from the lecture include:
 *   **Memory (The Hippocampus):** Following Penfield's procedures, patients like H.M. experienced memory loss. Researcher Brenda Milner used this to prove that there are multiple memory systems and that the extent of memory deficits directly correlated with how much of the medial temporal lobe (hippocampus) was removed. Additionally, Donald Hebb established that learning has a biological basis, famously noting that "cells that fire together, wire together".
 *   **Cognitive and Affective Control (vmPFC):** The famous case of Phineas Gage demonstrates that the ventromedial prefrontal cortex (vmPFC) is crucial for regulating cognitive and emotional control.
 *   **Attention (Parietal Lobe):** Damage to the right parietal lobe often results in *hemispatial neglect*, a disorder of attention where a person completely ignores the left side of their environment and has poor spatial awareness.
+
+
+
+
+### Usecases 
+
+### 1. Artificial Intelligence and Technology Use Cases
+Cognitive neuroscience concepts are actively used as templates and testing grounds for machine intelligence and advanced computing.
+
+*   **Building Biologically Detailed Digital Brains (Structural Emulation):** 
+    *   *Concept:* Emulating the exact physical structure and neural circuitry of the brain.
+    *   *Use Case:* The **Blue Brain Project** is a primary example of this approach. Researchers construct digital reconstructions and simulations of the mammalian (e.g., mouse) brain at a detailed biological level. The goal is to reverse-engineer specific neural circuits to identify the fundamental principles of brain structure and how it generates function.
+*   **Developing General-Purpose AI (Functional Emulation):**
+    *   *Concept:* Mimicking the algorithmic and computational levels of neural systems rather than their exact biological hardware.
+    *   *Use Case:* Organizations like **DeepMind** use systems neuroscience to gain insights into the algorithms, architectures, and representations the human brain utilizes. They apply these insights to create advanced, general-purpose artificial intelligence that can learn and adapt.
+*   **Validating Existing AI Algorithms:**
+    *   *Concept:* Proving that a computational algorithm is effective by showing the human brain uses a similar mechanism.
+    *   *Use Case:* If an algorithm is mathematically proposed for an AI system, discovering that a similar mechanism is actually implemented in the human brain provides strong support for its plausibility as an integral component of a general intelligence system. 
+*   **Using AI to Understand Brain Mechanisms:**
+    *   *Concept:* AI research providing reverse insights into biological brain functions.
+    *   *Use Case:* Advances in AI meta-reinforcement learning were used to propose a new theory of reward-based learning in the human brain, suggesting that the dopamine system actively "trains" the prefrontal cortex to operate as its own free-standing learning system.
+*   **Biomimicry in Engineering:**
+    *   *Concept:* Emulating the models, systems, and elements of nature (which have evolved via natural selection) to solve complex human problems.
+    *   *Use Case:* Designing technologies inspired by biological structures, such as modifying the nose of a bullet train to mimic the shape of a kingfisher’s beak to reduce noise and increase aerodynamic efficiency.
+
+### 2. Clinical Diagnostics and Neuropsychology Use Cases
+In medicine and cognitive psychology, understanding the link between brain *structure* and *function* is utilized to diagnose, treat, and map human behavior based on focal brain damage (lesions).
+
+*   **Surgical Mapping of Brain Functions (The Montreal Procedure):**
+    *   *Concept:* Identifying which brain structures correspond to specific sensory and motor functions to avoid damaging them during surgery.
+    *   *Use Case:* Developed by Wilder Penfield to treat severe epilepsy, this procedure involves destroying seizure-producing neurons. Before destroying tissue, surgeons use electrical probes to stimulate various parts of the brain in an awake patient, observing the physical or sensory results to create precise maps of the sensory and motor cortices. 
+*   **Diagnosing and Classifying Language Disorders (Aphasia):**
+    *   *Concept:* Using "double dissociation" to understand how distinct language functions are localized in different brain areas.
+    *   *Use Case:* Clinicians can diagnose specific types of brain damage based on speech patterns. If a patient can understand language but struggles to speak (expressive/non-fluent aphasia), clinicians know to look for damage in the **left inferior frontal lobe** (Broca's area, like the famous Patient "Tan"). Conversely, if a patient produces fluent but jumbled, nonsensical speech and cannot understand language (receptive/fluent aphasia), it indicates damage to the **left temporal lobe** (Wernicke's area).
+*   **Assessing Memory Deficits:**
+    *   *Concept:* Linking declarative memory to the medial temporal lobe.
+    *   *Use Case:* Using the case of Patient H.M., whose hippocampus was removed, neuropsychologists established that the extent of declarative memory loss directly correlates with how much of the medial temporal lobe is damaged or removed. This allows doctors to predict memory outcomes for patients with brain trauma or neurodegenerative diseases in this region.
+*   **Evaluating Behavioral and Emotional Dysregulation:**
+    *   *Concept:* The role of the ventromedial prefrontal cortex (vmPFC) in cognitive and affective control.
+    *   *Use Case:* Based on the historical case of Phineas Gage, who survived an iron rod piercing his frontal lobe, psychiatrists and neurologists use damage to the vmPFC to explain and diagnose severe changes in a patient's personality, decision-making, and emotional regulation.
+*   **Diagnosing Attention Disorders (Hemispatial Neglect):**
+    *   *Concept:* The parietal lobe's role in spatial awareness and attention to the environment.
+    *   *Use Case:* If a stroke patient exhibits "left-sided neglect"—completely ignoring the left side of their body, eating only half their food, or failing to interpret a whole visual scene—clinicians use this symptom to diagnose a lesion or stroke specifically in the **right parietal lobe**.
