@@ -81,3 +81,47 @@ In medicine and cognitive psychology, understanding the link between brain *stru
 *   **Diagnosing Attention Disorders (Hemispatial Neglect):**
     *   *Concept:* The parietal lobe's role in spatial awareness and attention to the environment.
     *   *Use Case:* If a stroke patient exhibits "left-sided neglect"—completely ignoring the left side of their body, eating only half their food, or failing to interpret a whole visual scene—clinicians use this symptom to diagnose a lesion or stroke specifically in the **right parietal lobe**.
+
+
+
+    ### Brooks et al. - 2012 - Turing centenary Is the brain a good model for machine intelligence.pdf
+
+This paper features four distinct viewpoints from scientists and entrepreneurs debating the intersection of computing and neuroscience to mark the centenary of Alan Turing's birth.
+
+### 1. Rodney Brooks: Avoid the "Cerebral Blind Alley"
+**Key Concepts:**
+*   **The Problem of Circular Modeling:** Brooks argues that the field is stuck in an "intellectual cul-de-sac" because we continuously model computers after brains, and brains after computers. This circular loop prevents researchers from discovering entirely new, groundbreaking models of intelligence.
+*   **Limitations of Binary Abstractions:** Early computational neuroscience, inspired by McCulloch and Pitts in 1943, modeled the "all-or-none" firing of biological neurons as binary logic gates. Brooks argues that these binary metaphors fail to capture the true complexities inherent in the human brain.
+*   **Dynamic vs. Static Computation:** Turing's original model of computation was based on manipulating symbols on an infinite tape, but biological systems are vastly different; they must respond to continuously varying stimuli over long periods, which in turn alters their environment.
+
+**Illustrative Scenario:**
+*   **Social Insects:** Brooks uses the scenario of social insects to show the limitations of Turing models. The behaviors of social insects are constantly affected by the physical structure of the home they are actively building, as well as the dynamic behaviors of their siblings. This continuous feedback loop between biology and environment is something standard computational models struggle to replicate.
+
+### 2. Dennis Bray: Brain Emulation Requires Actual Cells
+**Key Concepts:**
+*   **Hardware and Software are Inseparable:** Unlike artificial machines, the mind and the brain are not distinct "hardware" and "software" entities. Brains operate in cycles of continuous feedback rather than linear chains of causality.
+*   **The Importance of Chemistry:** Machine models fail to account for the biochemical reality of the brain. Living cells are soft, malleable, and rely on subtle biochemical changes and an infinite variety of macromolecules, rather than just electrical signals passing through copper and silicon.
+*   **Uniquely Biological Traits:** While machines can outpace humans in data retrieval, reproducing human traits like quirky brilliance, multi-tasking, consciousness, emotion, and a sense of self requires materials and designs vastly different from microchips. 
+
+**Illustrative Scenarios:**
+*   **Watson on *Jeopardy!*:** Bray points to IBM's Watson beating human contestants on the quiz show *Jeopardy!* by understanding colloquial English, puns, and cultural allusions. While Watson is a triumph of Turing's logical states, its internal workings are fundamentally different from the human brain.
+*   **The Complexity of a Synapse:** Bray presents the scenario of a programmer trying to represent a neuronal synapse with a single line of code. He argues this is entirely naive because a single synapse contains hundreds of interacting proteins, each functioning as its own chemical prodigy.
+
+### 3. Demis Hassabis: Model the Brain's Algorithms
+**Key Concepts:**
+*   **Opening the Biological "Black Box":** While AI researchers have historically ignored the brain for algorithmic inspiration, modern tools like functional MRI and optogenetics now allow us to look inside the brain's workings. 
+*   **Two Key Contributions of Neuroscience to AI:** First, the physical structures discovered in the brain can directly inspire new artificial computer architectures. Second, neuroscience can validate existing AI algorithms by proving that they are biologically plausible mechanisms for general intelligence. 
+*   **Grounding AI in Reality:** Understanding how the brain forms conceptual knowledge from perceptual inputs could help AI researchers ground artificial language systems in sensory reality. 
+
+**Illustrative Scenarios:**
+*   **Grid Cells and Hierarchical Layers:** Hassabis suggests taking specific biological structures—such as "grid cells" (which the brain uses for navigation) or "hierarchical cell layers" (used for visual processing)—and directly adapting them to inspire new computer algorithms for AI navigation and computer vision.
+
+### 4. Amnon Shashua: Speed and Architecture Trump Biological Advantages
+**Key Concepts:**
+*   **Form Follows Function:** In computing, architecture and algorithms must serve each other. Therefore, the vastly different physical architectures of computers and brains naturally favor entirely different strategies for achieving intelligence.
+*   **Memory and "Statistical Learning":** Human brains are parsimonious (economical) with data, whereas machine learning uses a "frequentist" approach known as statistical learning. This requires vast memory capacity and a massive collection of examples to generalize from—an approach completely at odds with how the biological brain learns.
+*   **Processing Speed vs. Architecture:** The brain has immense processing power (10-50 petaflops) but transmits signals at a "snail's pace" compared to modern CPUs. To compensate, the brain uses a hierarchical, parallel structure. Computers, conversely, have flat architectures but incredibly fast clock speeds, allowing them to rely on brute-force calculation.
+
+**Illustrative Scenarios:**
+*   **Data-Hungry AI (Watson and Volvo):** To demonstrate statistical learning, Shashua notes that IBM's Watson had to consume terabytes of reference material to win *Jeopardy!*, and Volvo's pedestrian-detection system had to "learn" by processing millions of pictures—a stark contrast to the human brain, which requires far fewer examples to learn a concept.
+*   **Deep Blue's Brute Force:** To illustrate architectural differences, Shashua highlights computer chess systems like Deep Blue. Instead of mimicking human intuition, Deep Blue uses brute-force search strategies, evaluating 200 million possible moves per second combined with massive libraries of end-games to defeat grandmasters.
