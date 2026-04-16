@@ -35,3 +35,17 @@ The underlying principle of an LLM is simple yet highly effective: its objective
 For example, while English has an estimated 600,000 words, an LLM might have a vocabulary of around 32,000 tokens (as is the case with Llama 2). Tokenization often works on sub-word units that can be combined.
 
 For instance, consider how the tokens “interest” and “ing” can be combined to form “interesting”, or “ed” can be appended to form “interested.”
+
+
+In other words, an LLM will decode text until it reaches the EOS. But what happens during a single decoding loop?
+
+- While the full process can be quite technical for the purpose of learning agents, here’s a brief overview:
+
+- Once the input text is tokenized, the model computes a representation of the sequence that captures information about the meaning and the position of each token in the input sequence.
+This representation goes into the model, which outputs scores that rank the likelihood of each token in its vocabulary as being the next one in the sequence.
+
+
+https://huggingface.co/datasets/agents-course/course-images/resolve/main/en/unit1/DecodingFinal.gif
+
+![alt text](image-32.png)
+![alt text](image-33.png)
