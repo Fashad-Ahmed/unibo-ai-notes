@@ -1,0 +1,30 @@
+An LLM is a type of AI model that excels at understanding and generating human language. They are trained on vast amounts of text data, allowing them to learn patterns, structure, and even nuance in language. These models typically consist of many millions of parameters.
+
+Most LLMs nowadays are built on the Transformer architecture—a deep learning architecture based on the “Attention” algorithm, that has gained significant interest since the release of BERT from Google in 2018.
+
+
+![alt text](image-30.png)
+
+
+There are 3 types of transformers:
+
+- Encoders
+        An encoder-based Transformer takes text (or other data) as input and outputs a dense representation (or embedding) of that text.
+
+        Example: BERT from Google
+        Use Cases: Text classification, semantic search, Named Entity Recognition
+        Typical Size: Millions of parameters
+
+- Decoders
+        A decoder-based Transformer focuses on generating new tokens to complete a sequence, one token at a time.
+
+        Example: Llama from Meta
+        Use Cases: Text generation, chatbots, code generation
+        Typical Size: Billions (in the US sense, i.e., 10^9) of parameters
+
+- Seq2Seq (Encoder–Decoder)
+        A sequence-to-sequence Transformer combines an encoder and a decoder. The encoder first processes the input sequence into a context representation, then the decoder generates an output sequence.
+
+        Example: T5, BART
+        Use Cases: Translation, Summarization, Paraphrasing
+        Typical Size: Millions of parameters
