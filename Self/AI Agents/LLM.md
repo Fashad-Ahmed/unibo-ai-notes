@@ -58,3 +58,10 @@ But there are more advanced decoding strategies. For example, beam search explor
 ***Attention is all you need***
 
 A key aspect of the Transformer architecture is Attention. When predicting the next word, not every word in a sentence is equally important; words like “France” and “capital” in the sentence “The capital of France is …” carry the most meaning.
+
+
+
+How are LLMs used in AI Agents?
+LLMs are a key component of AI Agents, providing the foundation for understanding and generating human language.
+
+They can interpret user instructions, maintain context in conversations, define a plan and decide which tools to use.
