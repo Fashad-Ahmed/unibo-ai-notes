@@ -49,3 +49,12 @@ https://huggingface.co/datasets/agents-course/course-images/resolve/main/en/unit
 
 ![alt text](image-32.png)
 ![alt text](image-33.png)
+
+
+But there are more advanced decoding strategies. For example, beam search explores multiple candidate sequences to find the one with the maximum total score–even if some individual tokens have lower scores.
+
+
+
+***Attention is all you need***
+
+A key aspect of the Transformer architecture is Attention. When predicting the next word, not every word in a sentence is equally important; words like “France” and “capital” in the sentence “The capital of France is …” carry the most meaning.
