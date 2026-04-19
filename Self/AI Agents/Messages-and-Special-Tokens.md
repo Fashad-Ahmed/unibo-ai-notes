@@ -128,3 +128,21 @@ messages = [
     {"role": "user", "content": "How do I use it ?"},
 ]
 ```
+
+
+
+The previous chat template will produce the following string:
+
+```
+<|im_start|>system
+You are a helpful assistant focused on technical topics.<|im_end|>
+<|im_start|>user
+Can you explain what a chat template is?<|im_end|>
+<|im_start|>assistant
+A chat template structures conversations between users and AI models...<|im_end|>
+<|im_start|>user
+How do I use it ?<|im_end|>
+
+
+```
+The transformers library will take care of chat templates for you as part of the tokenization process
