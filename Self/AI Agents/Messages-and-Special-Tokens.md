@@ -146,3 +146,28 @@ How do I use it ?<|im_end|>
 
 ```
 The transformers library will take care of chat templates for you as part of the tokenization process
+
+
+
+
+### Messages to prompt
+
+The easiest way to ensure your LLM receives a conversation correctly formatted is to use the chat_template from the model’s tokenizer.
+
+```
+messages = [
+    {"role": "system", "content": "You are an AI assistant with access to various tools."},
+    {"role": "user", "content": "Hi !"},
+    {"role": "assistant", "content": "Hi human, what can help you with ?"},
+]
+
+```
+
+To convert the previous conversation into a prompt, we load the tokenizer and call apply_chat_template:
+
+```
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+rendered_prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+```
