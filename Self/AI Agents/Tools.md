@@ -24,3 +24,13 @@ The Agent then reads this response, identifies that a tool call is required, exe
 
 The Tool-calling steps are typically not shown to the user: the Agent appends them as a new message before passing the updated conversation to the LLM again. The LLM then processes this additional context and generates a natural-sounding response for the user. From the user’s perspective, it appears as if the LLM directly interacted with the tool, but in reality, it was the Agent that handled the entire execution process in the background.
 
+#### How do we give tools to an LLM?
+The complete answer may seem overwhelming, but we essentially use the system prompt to provide textual descriptions of available tools to the model:
+
+
+![alt text](image-35.png)
+
+For this to work, we have to be very precise and accurate about:
+
+- What the tool does
+- What exact inputs it expects
