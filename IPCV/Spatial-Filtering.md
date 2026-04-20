@@ -558,3 +558,213 @@ This derivation explains:
 
 ---
 
+# 1) Numerical Example (3×3 image + 2×2 kernel)
+
+Take a small image:
+
+[
+i =
+\begin{bmatrix}
+1 & 2 & 3 \
+4 & 5 & 6 \
+7 & 8 & 9
+\end{bmatrix}
+]
+
+and a kernel:
+
+[
+h =
+\begin{bmatrix}
+1 & 0 \
+0 & -1
+\end{bmatrix}
+]
+
+---
+
+## Step-by-step convolution
+
+We slide the kernel over the image and compute:
+
+[
+o(x,y) = \sum i(u,v), h(x-u, y-v)
+]
+
+For simplicity, we’ll compute **valid convolution** (no padding).
+
+---
+
+### Top-left position
+
+[
+\begin{bmatrix}
+1 & 2 \
+4 & 5
+\end{bmatrix}
+\quad \text{with} \quad
+\begin{bmatrix}
+1 & 0 \
+0 & -1
+\end{bmatrix}
+]
+
+Compute:
+
+[
+(1 \cdot 1) + (2 \cdot 0) + (4 \cdot 0) + (5 \cdot -1)
+= 1 - 5 = -4
+]
+
+---
+
+### Top-right
+
+[
+\begin{bmatrix}
+2 & 3 \
+5 & 6
+\end{bmatrix}
+]
+
+[
+2\cdot1 + 3\cdot0 + 5\cdot0 + 6\cdot(-1)
+= 2 - 6 = -4
+]
+
+---
+
+### Bottom-left
+
+[
+\begin{bmatrix}
+4 & 5 \
+7 & 8
+\end{bmatrix}
+]
+
+[
+4 - 8 = -4
+]
+
+---
+
+### Bottom-right
+
+[
+\begin{bmatrix}
+5 & 6 \
+8 & 9
+\end{bmatrix}
+]
+
+[
+5 - 9 = -4
+]
+
+---
+
+## Final output
+
+[
+o =
+\begin{bmatrix}
+-4 & -4 \
+-4 & -4
+\end{bmatrix}
+]
+
+---
+
+## What just happened (intuition)
+
+This kernel is basically computing:
+
+[
+\text{top-left} - \text{bottom-right}
+]
+
+So it’s detecting a kind of **diagonal contrast**.
+
+---
+
+# 2) Convolution vs Correlation (VERY important)
+
+Here’s the subtle but critical difference:
+
+---
+
+## Convolution
+
+[
+o(x,y) = \sum i(u,v), h(x-u, y-v)
+]
+
+👉 Kernel is **flipped** (both horizontally and vertically)
+
+---
+
+## Correlation
+
+[
+o(x,y) = \sum i(u,v), h(x+u, y+v)
+]
+
+👉 Kernel is used **as-is (no flipping)**
+
+---
+
+## Key Difference
+
+| Operation   | Kernel flipped? | Used in practice     |
+| ----------- | --------------- | -------------------- |
+| Convolution | ✅ Yes           | Math / theory        |
+| Correlation | ❌ No            | CNNs (almost always) |
+
+---
+
+## Example of flipping
+
+Kernel:
+
+[
+\begin{bmatrix}
+1 & 2 \
+3 & 4
+\end{bmatrix}
+]
+
+Flipped (for convolution):
+
+[
+\begin{bmatrix}
+4 & 3 \
+2 & 1
+\end{bmatrix}
+]
+
+---
+
+## Why CNNs “ignore” flipping
+
+In deep learning:
+
+* Kernels are **learned**
+* Whether flipped or not doesn’t matter—the network adjusts weights
+
+So frameworks like:
+
+* TensorFlow
+* PyTorch
+
+actually implement **correlation**, but call it “convolution”.
+
+---
+
+# Final intuition
+
+* **Convolution** = flip + slide + multiply + sum
+* **Correlation** = slide + multiply + sum
+
+👉 Same mechanics, just one subtle flip difference.
+
