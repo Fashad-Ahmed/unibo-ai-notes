@@ -768,3 +768,210 @@ actually implement **correlation**, but call it “convolution”.
 
 👉 Same mechanics, just one subtle flip difference.
 
+
+---
+
+# 1) Finite image + kernel → why borders are a problem
+
+In theory, convolution assumes **infinite signals**.
+In practice:
+
+* Image = finite matrix (e.g., ( M \times N ))
+* Kernel = small matrix (e.g., ( 3 \times 3 ), ( 5 \times 5 ))
+
+👉 When the kernel reaches the **edges**, part of it falls *outside* the image.
+
+So the question is:
+
+> “What values do we use outside the image?”
+
+---
+
+# 2) Two main strategies
+
+## A) CROP (a.k.a. “valid convolution”)
+
+* Only compute where the kernel **fully overlaps** the image
+* Ignore borders
+
+### Result:
+
+* Output is **smaller**
+
+Example:
+
+* ( 5 \times 5 ) image + ( 3 \times 3 ) kernel → ( 3 \times 3 ) output
+
+👉 Common in **classical image processing**
+
+---
+
+## B) PAD (a.k.a. “same convolution”)
+
+* Extend the image artificially
+* Allows kernel to be applied everywhere
+
+### Result:
+
+* Output size is **same as input** (if padding chosen properly)
+
+👉 Preferred in **CNNs**, because:
+
+* Keeps spatial dimensions stable
+* Easier to stack layers
+
+---
+
+# 3) Padding methods (this is the key part)
+
+Let’s say your 1D signal is:
+
+[
+[a ; b ; c ; d]
+]
+
+We extend it differently depending on the rule.
+
+---
+
+## 1) Zero Padding
+
+[
+[0 ; 0 ; a ; b ; c ; d ; 0 ; 0]
+]
+
+👉 Most common in deep learning
+
+* Simple
+* But introduces **artificial dark borders**
+
+---
+
+## 2) Replicate Padding (a.k.a. edge padding)
+
+[
+[a ; a ; a ; b ; c ; d ; d ; d]
+]
+
+👉 Border values are **repeated**
+
+* Avoids artificial zeros
+* Can create “flat” edges
+
+---
+
+## 3) Reflect Padding
+
+[
+[c ; b ; a ; b ; c ; d ; c ; b]
+]
+
+👉 Mirror the signal **including edge**
+
+Pattern:
+
+* Left side mirrors inward
+* Edge value is repeated in reflection
+
+---
+
+## 4) Reflect_101 (a.k.a. symmetric without repeating edge)
+
+[
+[d ; c ; b ; a ; b ; c ; d ; c]
+]
+
+👉 Mirror **without duplicating the border pixel**
+
+This is often used in libraries like OpenCV.
+
+---
+
+# 4) Visual intuition (2D case)
+
+For a small image:
+
+[
+\begin{bmatrix}
+a & b \
+c & d
+\end{bmatrix}
+]
+
+### Zero padding:
+
+[
+\begin{bmatrix}
+0 & 0 & 0 \
+0 & a & b \
+0 & c & d \
+0 & 0 & 0
+\end{bmatrix}
+]
+
+---
+
+### Replicate:
+
+[
+\begin{bmatrix}
+a & a & b \
+a & a & b \
+c & c & d \
+c & c & d
+\end{bmatrix}
+]
+
+---
+
+### Reflect:
+
+[
+\begin{bmatrix}
+d & c & d \
+b & a & b \
+d & c & d \
+b & a & b
+\end{bmatrix}
+]
+
+---
+
+# 5) Why different padding matters
+
+Padding affects:
+
+### 🔹 Edge behavior
+
+* Zero padding → artificial edges
+* Reflect → smoother transitions
+
+### 🔹 Feature detection
+
+* Bad padding can create **fake edges**
+* Good padding preserves structure
+
+### 🔹 CNN performance
+
+* Zero padding is standard because:
+
+  * Simple
+  * Works well with learned filters
+
+---
+
+# 6) Summary
+
+* **CROP** → smaller output, no assumptions
+* **PAD** → same size, requires assumptions
+
+Padding types:
+
+* Zero → simplest, most used
+* Replicate → repeats borders
+* Reflect → mirror including edge
+* Reflect_101 → mirror excluding edge
+
+---
+
+
