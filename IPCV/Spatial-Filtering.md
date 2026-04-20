@@ -975,3 +975,272 @@ Padding types:
 ---
 
 
+
+---
+
+# 1) Numerical example: how padding changes the result
+
+Take a simple image:
+
+[
+i =
+\begin{bmatrix}
+1 & 2 \
+3 & 4
+\end{bmatrix}
+]
+
+and a kernel:
+
+[
+h =
+\begin{bmatrix}
+1 & 1 \
+1 & 1
+\end{bmatrix}
+]
+
+This kernel just **sums neighbors**.
+
+---
+
+## A) Without padding (CROP / valid)
+
+Only one position fits:
+
+[
+o = [1+2+3+4] = [10]
+]
+
+👉 Output:
+[
+\begin{bmatrix}
+10
+\end{bmatrix}
+]
+
+---
+
+## B) Zero padding
+
+Pad with zeros:
+
+[
+\begin{bmatrix}
+0 & 0 & 0 \
+0 & 1 & 2 \
+0 & 3 & 4 \
+0 & 0 & 0
+\end{bmatrix}
+]
+
+Now compute all positions:
+
+### Top-left:
+
+[
+0+0+0+1 = 1
+]
+
+### Top-right:
+
+[
+0+0+1+2 = 3
+]
+
+### Bottom-left:
+
+[
+0+1+0+3 = 4
+]
+
+### Bottom-right:
+
+[
+1+2+3+4 = 10
+]
+
+👉 Output:
+[
+\begin{bmatrix}
+1 & 3 \
+4 & 10
+\end{bmatrix}
+]
+
+⚠️ Notice:
+
+* Borders are **smaller values** → artificial effect from zeros
+
+---
+
+## C) Replicate padding
+
+Pad by repeating edges:
+
+[
+\begin{bmatrix}
+1 & 1 & 2 \
+1 & 1 & 2 \
+3 & 3 & 4 \
+3 & 3 & 4
+\end{bmatrix}
+]
+
+Now:
+
+### Top-left:
+
+[
+1+1+1+1 = 4
+]
+
+### Top-right:
+
+[
+1+2+1+2 = 6
+]
+
+### Bottom-left:
+
+[
+1+1+3+3 = 8
+]
+
+### Bottom-right:
+
+[
+1+2+3+4 = 10
+]
+
+👉 Output:
+[
+\begin{bmatrix}
+4 & 6 \
+8 & 10
+\end{bmatrix}
+]
+
+✔️ Much smoother than zero padding
+
+---
+
+## D) Reflect padding (intuitive result)
+
+Would give values similar to replicate but:
+
+* Better preserves **gradients**
+* Less artificial flattening
+
+---
+
+# 2) How to compute padding size (“same” convolution)
+
+Goal:
+
+> Keep output size = input size
+
+---
+
+## General formula
+
+For 1D (applies per dimension in 2D):
+
+[
+\text{output} =
+\left\lfloor
+\frac{N + 2P - K}{S}
+\right\rfloor + 1
+]
+
+Where:
+
+* ( N ) = input size
+* ( K ) = kernel size
+* ( P ) = padding
+* ( S ) = stride
+
+---
+
+## For “same” output
+
+We want:
+
+[
+\text{output} = N
+]
+
+So:
+
+[
+N = \frac{N + 2P - K}{S} + 1
+]
+
+---
+
+## Case: stride = 1 (most common)
+
+[
+N = N + 2P - K + 1
+]
+
+Solve:
+
+[
+2P = K - 1
+\quad \Rightarrow \quad
+P = \frac{K - 1}{2}
+]
+
+---
+
+## Examples
+
+### 3×3 kernel
+
+[
+P = (3-1)/2 = 1
+]
+
+👉 Add 1 pixel border
+
+---
+
+### 5×5 kernel
+
+[
+P = (5-1)/2 = 2
+]
+
+👉 Add 2 pixels border
+
+---
+
+### Even kernel (e.g., 4×4)
+
+[
+P = (4-1)/2 = 1.5
+]
+
+⚠️ Not symmetric → frameworks handle this by:
+
+* asymmetric padding (e.g., 1 left, 2 right)
+
+---
+
+# 3) Key takeaways
+
+* Padding is not just technical—it **changes results**
+* Zero padding → introduces artificial edges
+* Replicate/reflect → more natural borders
+* CNNs use zero padding mainly for **simplicity and consistency**
+
+---
+
+# 4) Mental model
+
+* Kernel = “window”
+* Padding = “what exists outside the image”
+* Different padding = different assumptions about the world beyond the image
+
+---
