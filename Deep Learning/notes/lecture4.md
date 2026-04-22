@@ -40,7 +40,7 @@ Optimizations
 
 If, during consecutive training steps, the gradient seems to follow a
 stable direction, we could improve its magnitude, simulating the
-fact that it is acquiring a momentun along that direction, similarly
+fact that it is acquiring a momentum along that direction, similarly
 to a ball rolling down a surface.
 The hope is to reduce the risk
 to get stuck in a local minimum, or a plateau.
