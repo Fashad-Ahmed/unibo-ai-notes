@@ -49,3 +49,22 @@ The lecture relies heavily on three tools to evaluate models and systems:
 * Is the Yamins (2014) model a genuine representation of biological vision, or just a black box that happens to correlate with the brain's black box? [cite: 376]
 * What is the brain's true "Level 1" computational problem? Is it strictly object recognition, or something entirely different? [cite: 377, 378]
 * How do physiological states continuously reshape the brain's objective function, and what does this mean for the representations it builds compared to static AI models? [cite: 379, 380]
+
+
+
+
+### 1. Is the Yamins model a genuine model of biological vision or a black box that correlates with another black box? [cite: 376]
+The current consensus is that deep convolutional neural networks (like the Yamins model) are excellent **Algorithmic (Level 2)** models, but they fail profoundly as **Implementational (Level 3)** models. 
+* **The Similarities (Why it's genuine):** Both systems use hierarchical, spatially local computations to untangle visual data. They both build invariance layer by layer, which is why their representational geometries match so well when evaluated with RSA.
+* **The Differences (Why it's a black box):** Standard vision models are strictly feed-forward, while the biological visual cortex is massively recurrent, with constant feedback loops from higher areas (like the IT cortex) back down to early areas (like V1). Furthermore, AI models are susceptible to adversarial attacks—tiny, invisible pixel shifts that completely break the model's classification—which human brains effortlessly ignore. This suggests that while the representations look geometrically similar, the underlying mechanisms building them have critical differences.
+
+### 2. What is the brain's Level 1 problem? Is it object recognition? [cite: 377]
+No, passive "object recognition" is an artificial construct optimized for benchmark datasets like ImageNet. The brain's true Level 1 computational problem is **action-oriented perception** (often called embodied cognition).
+* The brain does not recognize a coffee cup simply to assign it a text label. It recognizes the cup to understand its *affordances*—how heavy it is, where the handle is, and how to successfully grasp it without spilling hot liquid. 
+* Unlike an AI classifier, the brain's visual system evolved as a closed-loop control system embedded in a physical environment. The ultimate computational goal isn't classification; it is successful interaction and survival.
+
+### 3. What does a physiologically reshaped objective function mean for representations, and what are AI models missing? [cite: 379, 380]
+Artificial models have static objective functions (e.g., minimizing cross-entropy loss) fixed at training time. The brain's objective function is dynamic, constantly shifting based on neurochemical states, hormones, and bodily needs.
+* **Dynamic Representations:** Because the brain optimizes for survival, its representations change based on its state. If you are starving, your visual system actually becomes more sensitive to food-like stimuli. The representation of an apple looks different to your brain when you are hungry versus when you are full.
+* **What AI is missing:** Most AI models lack this "interoceptive" drive. Their representations are frozen after training. To truly close the gap, future AI architectures—particularly in domains like Reinforcement Learning—would need artificial "homeostasis," where the agent's internal state (e.g., simulated energy levels or hardware temperature) dynamically re-weights how it perceives the external environment and calculates reward.
+
