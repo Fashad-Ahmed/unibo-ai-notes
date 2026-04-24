@@ -84,3 +84,9 @@ W = dimension of the input
 P = padding
 K = Kernel size
 S = Stride
+
+
+
+
+![alt text](image-13.png)
+
