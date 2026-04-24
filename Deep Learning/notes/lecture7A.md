@@ -69,3 +69,18 @@ Why: One head might learn to pay attention to grammar (subject-verb agreement), 
 After the attention mechanism figures out the context, the data passes through a standard, 2-layer Dense network.
 
 The Catch: This dense network is applied to each word individually and identically. It acts as a processing step to solidify the new context-aware features before passing them to the next block.
+
+
+
+#### Dimension of the output
+The spatial dimension of each output feature map depends form
+the spatial dimension of the input, the padding, and the stride.
+Along each axes the dimension of the output is given by the
+
+- formula: (( W + P − K )/S) + 1
+
+where:
+W = dimension of the input
+P = padding
+K = Kernel size
+S = Stride
