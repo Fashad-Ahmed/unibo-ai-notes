@@ -46,3 +46,26 @@ To see how adding, removing, or resizing layers drastically alters the architect
 3. Attention Layers (Self-Attention): The Contextual MatchmakerThis is the engine powering modern Deep Learning (Transformers, LLMs) and is fundamentally different from both Dense and Conv layers.The Concept: A Convolutional layer has a fixed window (e.g., it only looks at 3 adjacent words). A Dense layer looks at everything with fixed, static weights. Attention is dynamic. It allows the network to look at an entire sequence of data and dynamically decide which parts of the sequence are most relevant to each other, regardless of the physical distance between them.The Application: When processing highly contextual text—like evaluating nuanced social media data for sexism detection or building automated term extraction pipelines—a local window isn't enough. A noun at the end of a sentence might be modified by an adjective at the very beginning. Attention creates a direct mathematical bridge between those two words, bypassing the words in between.The Math (Scaled Dot-Product Attention): The input is split into three learned matrices: Queries (what I am looking for), Keys (what I have), and Values (what I actually am).
 
 ![alt text](image-11.png)
+
+1. The Core Components of a Transformer
+A standard Transformer consists of stacked blocks. Each block takes a sequence of vectors, enriches them with context, and outputs a sequence of the same shape.
+
+Here are the pieces that make up one Transformer Encoder Block:
+
+1. The Core Components of a TransformerA standard Transformer consists of stacked blocks. Each block takes a sequence of vectors, enriches them with context, and outputs a sequence of the same shape.Here are the pieces that make up one Transformer Encoder Block:
+
+- A. Positional EncodingBecause Transformers process all words at the exact same time (for massive GPU parallelization), they have no concept of word order. "The dog bit the man" and "The man bit the dog" look mathematically identical to a pure attention layer.The Math: We inject the position by adding a mathematical wave to the word embeddings before they enter the network. We use sine and cosine functions of different frequencies:
+
+![alt text](image-12.png)
+
+- B. Multi-Head Attention
+Instead of calculating Attention once, Transformers calculate it multiple times in parallel (e.g., 8 "heads").
+
+Why: One head might learn to pay attention to grammar (subject-verb agreement), while another head learns to pay attention to sentiment, and another tracks pronouns. The results of all heads are concatenated and pushed through a linear layer.
+
+- C. Residual Connections & Layer Normalization (Add & Norm)Deep networks suffer from vanishing gradients. To fix this, Transformers use Residual Connections (bypassing the attention layer and adding the original input directly to the output: $X + \text{Attention}(X)$). This is immediately followed by Layer Normalization to keep the numbers stable.
+
+- D. Position-wise Feed-Forward Network (FFN)
+After the attention mechanism figures out the context, the data passes through a standard, 2-layer Dense network.
+
+The Catch: This dense network is applied to each word individually and identically. It acts as a processing step to solidify the new context-aware features before passing them to the next block.
