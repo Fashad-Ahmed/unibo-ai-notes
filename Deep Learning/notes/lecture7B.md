@@ -17,6 +17,7 @@ Average Pooling: Slides a window and calculates the mean.
 
 Why: It provides a smoother summary of the region. Often used at the very end of CNNs (Global Average Pooling) to crush an entire feature map into a single number before the final classification.
 
+![alt text](image-15.png)
 
 2. Upsampling: The Expanders
 Upsampling does the exact opposite of pooling. It takes a small tensor and blows it up into a larger one. This is absolutely critical for Generative AI (like generating high-res images from a tiny noise vector in GANs) or Segmentation (where you shrink an image to understand context, and then expand it back to its original size to color in specific pixels).
