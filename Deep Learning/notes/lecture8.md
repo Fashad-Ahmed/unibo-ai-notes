@@ -62,3 +62,11 @@ This single number replaces that entire $3 \times 3$ patch in the new "Destinati
  - If you use a single $5 \times 5$ layer, you are applying one linear transformation, followed by one activation function (like ReLU).
  - If you stack two $3 \times 3$ layers, you get: Linear Transformation $\rightarrow$ ReLU $\rightarrow$ Linear Transformation $\rightarrow$ ReLU.
  - The Impact: As we discussed earlier with the Universal Approximation Theorem, non-linear activation functions are what allow a network to bend and warp its decision boundaries. By stacking smaller layers, you inject more non-linearities into the network, making it exponentially more expressive and capable of learning highly complex patterns.
+
+
+
+
+ Input/Output Dimensions: This is the single most common place where neural network code crashes. When you pass a tensor through a CNN layer, its spatial dimensions change based on four variables: Input size ($I$), Kernel size ($K$), Padding ($P$), and Stride ($S$).The Formula:$$O = \lfloor \frac{I - K + 2P}{S} \rfloor + 1$$Padding ($P$): Adds rings of zeros around the input. We usually use $P = (K - 1) / 2$ (with stride 1) to ensure the output size perfectly matches the input size ("Same" padding).Stride ($S$): How many pixels the window shifts. Stride 2 cuts the spatial dimensions perfectly in half.The "+ 1": This is the classic "fencepost error" correction. If you have a 10-foot fence with posts every 2 feet, you need 6 posts, not 5.
+
+
+
