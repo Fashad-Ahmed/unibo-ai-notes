@@ -87,4 +87,40 @@ These slides provide the exact mathematical blueprints for how convolutional lay
  The Matrix RealityHow does backpropagation actually work for a sliding window? The short answer: it doesn't.Writing nested for loops to slide a window backward through a tensor is computationally suicidal. Instead, AI libraries like PyTorch and CUDA use a trick called im2col (Image to Column).The im2col Trick:PyTorch takes every local patch of the image that the kernel would touch and flattens it into a single column.It takes the Convolutional filters and flattens them into a row.The convolution is then executed as one massive, highly optimized General Matrix Multiplication (GEMM).The Calculus:When computing the gradients, convolutions exhibit a beautiful mathematical symmetry:The gradient of the Loss with respect to the Input ($X$) is a full convolution of the Loss Gradients with the flipped (rotated 180 degrees) Kernel.The gradient of the Loss with respect to the Weights ($W$) is a convolution between the Input and the Loss Gradients.
 
 
+**Transposed Convolutions:** 
  
+ The Upsampler Often (incorrectly) called "deconvolutions," these are used in architectures like U-Nets and GANs to take a small, deep feature map and blow it up into a high-resolution image.The Mechanics:Instead of taking a 3x3 patch of pixels and summarizing them into one pixel, a transposed convolution takes one pixel from the input, multiplies it by a 3x3 learnable kernel, and "broadcasts" those 9 values onto the output grid.Fractional Stride: Think of it as having a stride of $1/2$. If you have a 2x2 input, it injects empty space (zeros) between the input pixels, making it a larger grid, and then convolves over it.The Danger (Checkerboard Artifacts): Because these broadcasted 3x3 patches overlap, some pixels get values added to them multiple times. This creates a highly visible "checkerboard" pattern in AI-generated images. To fix this, many researchers now prefer using standard Bilinear Upsampling followed by a standard 1x1 Convolution.
+
+
+ ![alt text](image-27.png)
+
+ **What is a "Fractional Stride" Mathematically?**
+ 
+ You cannot physically move a sliding window by half a pixel ($S = 1/2$). Instead, deep learning frameworks simulate a fractional stride by expanding the input tensor with zeros before performing a standard $S=1$ convolution.The Math of Zero-Insertion:Let your input $X$ be a 1D sequence of length $N$. Let your desired stride be $S=2$.To simulate a stride of $1/2$, we insert exactly $S - 1$ zeros between every element in $X$.If your input is $X = [1, 1, 1]$ and $S = 2$:$$X_{expanded} = [1, 0, 1, 0, 1]$$Once the input is expanded, we slide our Kernel $K$ across $X_{expanded}$ one step at a time ($S=1$).
+
+ **The Danger: Mathematical Overlap (Checkerboarding)**
+
+ The "danger" occurs because of how the Kernel overlaps with itself as it slides across the zero-inserted input.If the Kernel size $K$ is not a clean multiple of the Stride $S$, the mathematical sum at each output pixel becomes uneven. Some output pixels receive information from two kernel weights, while adjacent pixels might only receive information from one.The Mathematical Proof (1D Example):Let's use a Kernel $K = [1, 1, 1]$ (Size $K=3$) and a Stride $S=2$.We know $X_{expanded} = [1, 0, 1, 0, 1]$Let's slide the $3 \times 1$ kernel across $X_{expanded}$ and calculate the sum at each step:Step 1: $K$ covers [1, 0, 1].Sum = $(1\times1) + (1\times0) + (1\times1) = \mathbf{2}$Step 2: $K$ covers [0, 1, 0].Sum = $(1\times0) + (1\times1) + (1\times0) = \mathbf{1}$Step 3: $K$ covers [1, 0, 1].Sum = $(1\times1) + (1\times0) + (1\times1) = \mathbf{2}$
+ 
+ The Output Array: $\mathbf{[2, 1, 2]}$
+ Do you see the alternating pattern? The network hasn't learned any features yet; its very architecture is hardcoding a 2, 1, 2, 1, 2 high-low frequency pattern into the data. When scaled to 2D images, this manifests as a highly visible, grid-like checkerboard artifact across the generated image.
+
+
+
+ **The Solution: The Divisibility Rule**
+ 
+ To avoid this mathematical trap when using Transposed Convolutions, researchers adhere to a strict rule: The Kernel size ($K$) must be perfectly divisible by the Stride ($S$).If we change the Kernel size to $K=4$ (e.g., $K=[1, 1, 1, 1]$) while keeping $S=2$:$K \pmod S == 0$ (4 is divisible by 2).Let's slide the new $K=4$ kernel across a longer zero-inserted input [1, 0, 1, 0, 1, 0, 1]:Covers [1, 0, 1, 0] $\rightarrow$ Sum = 2Covers [0, 1, 0, 1] $\rightarrow$ Sum = 2Covers [1, 0, 1, 0] $\rightarrow$ Sum = 2Covers [0, 1, 0, 1] $\rightarrow$ Sum = 2
+ 
+ - The Output Array: 
+ [2, 2, 2, 2] The artifact is completely eliminated. The overlap is perfectly even.
+
+
+
+
+ **The Modern Engineering Fix (Resize-Convolution)**
+ 
+ Even with the divisibility rule, Transposed Convolutions can struggle during the early epochs of training before the weights balance out.Today, if you look at the source code for advanced image generation models (like Stable Diffusion or modern GANs), they largely abandon ConvTranspose2d entirely. Instead, they separate the spatial upsampling from the mathematical feature learning:
+ - Nearest-Neighbor Interpolation: Mathematically scale the $32 \times 32$ grid to $64 \times 64$ by simply duplicating pixels. (No parameters, no overlapping sums).
+ 
+ - Standard Convolution: Run a standard $3 \times 3$ Convolution over the new $64 \times 64$ grid to smooth it out and learn features.This guarantees zero checkerboard artifacts while achieving the exact same upscale.
+
