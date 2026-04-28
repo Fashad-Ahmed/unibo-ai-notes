@@ -124,3 +124,20 @@ These slides provide the exact mathematical blueprints for how convolutional lay
  
  - Standard Convolution: Run a standard $3 \times 3$ Convolution over the new $64 \times 64$ grid to smooth it out and learn features.This guarantees zero checkerboard artifacts while achieving the exact same upscale.
 
+
+
+
+**Dilated (Atrous) Convolutions: Expanding Context for Free**
+
+How do you increase your Receptive Field massively without using Pooling (which destroys spatial resolution) and without using huge 11x11 kernels (which explode parameter counts)?
+
+You use Dilated convolutions.
+
+The Mechanics:
+You take a standard 3x3 kernel and inject spaces (zeros) between its elements.
+
+A 3x3 kernel with a dilation of 2 acts like a 5x5 kernel, but it still only has 9 learnable parameters. It just skips the pixels in between.
+
+Use Cases: This is the secret sauce behind DeepMind's WaveNet (for raw audio generation) and semantic segmentation models. You can stack dilations of 1, 2, 4, 8, 16 to get an exponentially massive receptive field while keeping the feature map at the exact same high resolution as the input image.
+
+![alt text](image-28.png)
