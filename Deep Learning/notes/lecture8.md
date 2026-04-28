@@ -141,3 +141,23 @@ A 3x3 kernel with a dilation of 2 acts like a 5x5 kernel, but it still only has 
 Use Cases: This is the secret sauce behind DeepMind's WaveNet (for raw audio generation) and semantic segmentation models. You can stack dilations of 1, 2, 4, 8, 16 to get an exponentially massive receptive field while keeping the feature map at the exact same high resolution as the input image.
 
 ![alt text](image-28.png)
+
+
+
+# Depthwise Separable Convulation
+
+
+![alt text](image-31.png)
+
+
+
+A standard convolution does two things simultaneously:
+
+- Spatial mixing: Looking at adjacent pixels.
+- Channel mixing: Combining the Red, Green, and Blue channels.
+
+Doing both at once requires an enormous number of parameters ($K^2 \times C_{in} \times C_{out}$). Depthwise Separable Convolutions factorize this operation into two distinct, highly efficient steps.
+
+- Step 1: Depthwise Convolution (Spatial)We apply a spatial kernel (e.g., 3x3), but we strictly apply it to one channel at a time. The Red channel gets its own 3x3 filter. Green gets its own. Blue gets its own. There is zero mixing between colors.
+
+- Step 2: Pointwise Convolution (Channel)We take the output of Step 1 and run a 1x1 convolution across it. A 1x1 convolution has no spatial awareness (it just looks at a single pixel), but it looks across all channels and mixes them together to create the new output channels.The Result: By separating the math, you reduce the computational cost from $O(N^3)$ to almost nothing. This specific architectural trick is why we can run highly accurate image recognition models locally on edge devices and smartphones (e.g., MobileNet).
