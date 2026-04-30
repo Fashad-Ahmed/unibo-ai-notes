@@ -5,7 +5,16 @@
  ![alt text](image-37.png)
 
 
- 
+**Data for RNN**
+
+![alt text](image-38.png)
+
+
+![alt text](image-39.png)
+
+
+
+![alt text](image-40.png)
 **The Sequence Problem Paradigm**
 
 Traditional feed-forward networks struggle with sequential data. Sequence modeling involves solving distinct types of problems:
@@ -57,5 +66,4 @@ Because neural networks operate on directed acyclic graphs (graphs without loops
  ![alt text](image-35.png)
 
  ![alt text](image-36.png)
-
 
