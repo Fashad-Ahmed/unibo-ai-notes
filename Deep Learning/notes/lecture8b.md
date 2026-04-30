@@ -1,3 +1,11 @@
+
+ **Faults in ANN for sequential data**
+
+
+ ![alt text](image-37.png)
+
+
+ 
 **The Sequence Problem Paradigm**
 
 Traditional feed-forward networks struggle with sequential data. Sequence modeling involves solving distinct types of problems:
@@ -49,3 +57,5 @@ Because neural networks operate on directed acyclic graphs (graphs without loops
  ![alt text](image-35.png)
 
  ![alt text](image-36.png)
+
+
