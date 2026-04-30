@@ -32,3 +32,20 @@ Because neural networks operate on directed acyclic graphs (graphs without loops
  - Unrolling: We visualize the recurrent loop as a standard feed-forward network stretched out across time steps ($t=0, t=1, t=2 \dots$).
  - Shared Weights: The exact same weight matrices are reused at every single time step.
  - Backpropagation Through Time (BPTT): To update the weights, the network builds a stack of activities during the forward pass. During the backward pass, it calculates the gradient of the error at each time step and simply sums them together. For a shared weight $w$, the update is:$$\Delta w = \sum_{t} \frac{\partial E}{\partial w_t}$$
+
+
+
+ **The LSTM BreakthroughStandard** 
+ 
+ RNNs suffer from instability (vanishing or exploding gradients) because they blindly overwrite their hidden state at every iteration. Long-Short Term Memory (LSTM) networks solve this by introducing a central "Memory Cell" ($C_t$) regulated by three "Gates."These gates use sigmoid activation functions to output values between $0$ and $1$, acting as boolean masks to selectively let information through.
+ 
+ 
+ ![alt text](image-32.png)
+
+ ![alt text](image-33.png)
+
+ ![alt text](image-34.png)
+
+ ![alt text](image-35.png)
+
+ ![alt text](image-36.png)
