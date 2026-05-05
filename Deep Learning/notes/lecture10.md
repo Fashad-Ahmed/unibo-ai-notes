@@ -82,3 +82,7 @@ The Use Case: Because its entire architecture is built around "what comes next?"
 
 
 (Note: Models like T5 or BART use the full Encoder-Decoder Transformer architecture, making them excellent at tasks that require both deep understanding and heavy generation, like Summarization or Translation).
+
+Before Transformers, we used Recurrent Neural Networks (RNNs) to process text. RNNs read words one by one, left to right, maintaining a "hidden state" (a memory). The problem? They are sequential. You cannot compute step 100 until you compute step 99. This makes them slow and causes them to forget early context.
+
+The Transformer, introduced in the 2017 paper "Attention Is All You Need", threw away recurrence entirely. Instead, it treats every word in a sequence as a node in a fully connected graph. Every word can "look" at every other word simultaneously.
