@@ -89,3 +89,43 @@ The Transformer, introduced in the 2017 paper "Attention Is All You Need", threw
 
 
 ![alt text](image-56.png)
+
+
+Using multiple heads for attention
+expands the model’s ability to focus on different positions, for different purposes.
+As a result, multiple “representation subspaces” are created, focusing on potentially different aspects
+of the input sequence.
+
+
+![alt text](image-57.png)
+
+
+![alt text](image-58.png)
+
+
+The Macro View (Left Side): The Assembly LineThis shows how a sentence flows through the entire model.Input Token Vectors: Text doesn't exist in math. Words are chopped into "tokens" and mapped to high-dimensional vectors (lists of numbers).Position Embedding: As we discussed earlier, the Transformer processes all words simultaneously. It has no idea what order they are in. Here, we add a mathematical wave (the sine/cosine signal represented by the little $\sim$ icon) to the token vectors so the network knows, "I am the 3rd word in the sentence."The Stack of Decoder Blocks: This is where the magic happens. The data passes through multiple identical blocks (e.g., 12 for GPT-1, 96 for GPT-3). Each block refines the context.Output Token Vectors: After passing through the entire stack, these vectors hold the ultimate, context-rich representation of the sequence, ready to be translated into probabilities for the next word.
+
+
+
+The Micro View (Right Side): Inside a Single Block
+
+This zooms in on one of those orange "Decoder Block" rectangles. Data flows from the bottom to the top. Notice how it is distinctly split into two major phases, wrapped in bypass lanes.
+
+Phase 1: The Communication Phase
+Layer Norm (Bottom): Before doing any heavy math, the data is normalized (mean 0, variance 1). This acts as a traffic stabilizer, ensuring the numbers don't explode or vanish as they go through the network. (Note: This image shows a "Pre-Norm" architecture, which is what modern LLMs use because it's vastly more stable than the original 2017 paper's layout).
+
+
+Masked Self-Attention: This is where the tokens "talk" to each other. The word "it" looks around to figure out if it refers to the "cat" or the "street".Why "Masked"? Because this is a generative model, it is strictly forbidden from looking at future tokens. The mask mathematically blocks future words from participating in the conversation.
+
+
+The First + (Residual Connection): Look at the arrow bypassing the Attention box entirely. This is the Residual Connection. We take the original input and add it directly to the output of the Attention layer ($X + \text{Attention}(X)$). This creates a direct "gradient highway" that prevents the network from forgetting the original word and completely solves the vanishing gradient problem in deep networks.
+
+
+Phase 2: The Computation Phase
+Layer Norm (Middle): We stabilize the numbers again after the attention mixing.
+
+
+FFNN (Feed-Forward Neural Network): Attention just moves data between words; it doesn't process it. The FFNN is a standard, two-layer dense network applied to every single token individually. If Attention is the tokens having a meeting to share notes, the FFNN is the tokens going back to their separate desks to think about what those notes mean.
+
+
+The Second + (Residual Connection): Once again, we bypass the FFNN and add the pre-FFNN data to the output ($X + \text{FFN}(X)$), ensuring stability as we pass the data up to the next block in the stack.
