@@ -81,3 +81,51 @@ Why is the network so easily fooled? Professor Asperti points to the **Data Mani
 * When we train a classifier, it draws massive boundaries dividing the whole room into "Dogs" and "Cats." 
 * However, the network only understands the boundaries *on the wire*. If you add adversarial noise to an image, you are mathematically pushing the image slightly *off the wire* into the empty space of the room. The classifier's boundaries in this empty space are completely arbitrary and erratic, which is why an imperceptible change causes a catastrophic misclassification.
 
+
+
+
+
+### The Big Picture: The "Black Box" Problem
+
+Normally, neural networks are treated like a "black box." You feed an image in, and the box spits an answer out (e.g., "That is a dog"). 
+
+The problem is that we don't actually know *how* the AI makes that decision. Does it look at the dog's ears? Does it look at the fur? Does it just look at the grass in the background? 
+
+This lecture is entirely about **running the AI backward** to peek inside that black box.
+
+---
+
+### Part 1: Explainability (Reading the AI's Mind)
+
+Normally, you give the AI an image, and it gives you an answer. 
+In **Explainability**, we flip that. We give the AI an answer, and ask it to draw the image.
+
+Imagine asking an AI: *"What does a dog look like to you?"*
+1. You start with a screen of pure static (like a broken TV).
+2. You ask the network, "Make this static look 1% more like a dog."
+3. You repeat this thousands of times.
+4. Eventually, the static morphs into a bizarre, dream-like collage of dog snouts, fur, and eyes. 
+
+**Why do we do this?** Because it tells us what the AI is paying attention to! If you ask it to draw a "dumbbell" and it draws a dumbbell with a muscular arm attached to it, you immediately realize a flaw: the AI thinks human arms are a permanent part of what makes a dumbbell a dumbbell. 
+
+---
+
+### Part 2: Vulnerability (Tricking the AI)
+
+If we can run the AI backward to see its dreams, we can also run it backward to find its blind spots. This is what **Adversarial Attacks** are.
+
+AI does not "see" the world like we do. It sees a giant Excel spreadsheet of numbers. Because it relies on strict mathematical boundaries, it has devastating vulnerabilities.
+
+Imagine you have a picture of a **School Bus**. 
+1. You ask the network: *"What tiny, invisible mathematical changes can I make to this picture to make you think it's an Ostrich?"*
+2. The network runs backward and tells you exactly which pixels to tweak.
+3. You change those pixels by an amount so small that human eyes literally cannot see the difference. 
+4. To you and me, it is a perfect picture of a School Bus. But you feed it to the AI, and it shouts with 99% confidence: **"That is an Ostrich!"**
+
+**Why do we do this?** Because if a hacker puts an invisible sticker on a Stop Sign, and a self-driving car's AI suddenly thinks it's a "Speed Up" sign, people die. We have to understand these vulnerabilities to fix them.
+
+### The Summary
+The entire lecture is just two sides of the same coin: **Reverse Engineering**.
+* **Explainability** uses reverse engineering for good (to understand how the AI thinks).
+* **Vulnerability** uses reverse engineering for bad (to find invisible ways to break the AI's brain).
+
