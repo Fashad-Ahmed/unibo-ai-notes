@@ -129,3 +129,19 @@ FFNN (Feed-Forward Neural Network): Attention just moves data between words; it 
 
 
 The Second + (Residual Connection): Once again, we bypass the FFNN and add the pre-FFNN data to the output ($X + \text{FFN}(X)$), ensuring stability as we pass the data up to the next block in the stack.
+
+
+The positional information is a vector of the same dimensions dmodel, of
+the word embedding.
+The authors use sine and cosine functions of different frequencies:
+
+PE(pos,2i) = sin(pos/100002i/dmodel)
+
+PE(pos,2i+1) = cos(pos/100002i+1/dmodel)
+
+
+
+- In self-attention, each token attends to all others, including
+future ones
+- But to predict token t + 1, the model must not see it.
+- We must enforce causality
