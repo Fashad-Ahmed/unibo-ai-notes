@@ -165,3 +165,32 @@ $$ZNCC(i, j) = \frac{\sum\sum (I - \mu_I)(T - \mu_T)}{\sqrt{\sum\sum (I - \mu_I)
 * **Additive Invariance:** By subtracting the local average brightness ($\mu$) from every pixel, you mathematically destroy any flat brightness shift. If the sun adds $+50$ brightness to every pixel, the average $\mu$ also goes up by $50$. When you subtract the new $\mu$ from the new pixels, the $+50$ is instantly erased.
 * **The Result:** ZNCC is mathematically invariant to **affine intensity changes** ($\tilde{I} = \alpha \cdot T + \beta$). No matter how you multiply the contrast ($\alpha$) or shift the brightness ($\beta$), ZNCC will still perfectly recognize the structural pattern of the template.
 
+![alt text](image-23.png)
+
+
+This slide provides the ultimate visual proof of why we had to upgrade the template matching math from SSD to ZNCC. It is a real-world "stress test" showing exactly how the algorithms behave when the lighting goes wrong.
+
+Here is the breakdown of what is happening in the three images:
+
+### 1. The Setup (Left Image)
+
+This is the baseline. The computer is given a template: a crop of the person wearing a white shirt and dark pants (marked by the red box). The goal is to find this exact person in the other two mathematically corrupted images.
+
+### 2. Test 1: Extreme Brightness (Middle Image)
+
+This image has been severely washed out (overexposed). A massive amount of flat brightness was added to every pixel.
+
+* **SSD (Blue) & SAD (Green) Fail:** Look at where their bounding boxes landed. They completely missed the target. Because they measure absolute mathematical differences, the added brightness ruined their scores. To minimize the massive math error, they just randomly latched onto the darkest blurry shapes left in the image.
+* **NCC & ZNCC (Red) Succeed:** They found the target perfectly because they look at the *relative* structural pattern (the vectors), ignoring the flat brightness boost.
+
+### 3. Test 2: Extreme Darkness (Right Image)
+
+This image has been severely darkened and its contrast crushed.
+
+* **SSD & SAD Fail:** They miss the target again for the same reasons.
+* **NCC (Yellow) Fails:** Notice that the basic Normalized Cross-Correlation (NCC) has now drifted off target! NCC handles contrast multiplication well, but it struggles with severe additive/subtractive lighting shifts.
+* **ZNCC (Red) Succeeds:** The Zero-Mean Normalized Cross-Correlation remains perfectly locked on the target. Because ZNCC calculates the local average brightness and subtracts it *before* making the comparison, it is completely blind to the darkness. It only sees the underlying structural pattern.
+
+**The Takeaway:** As the red text states, ZNCC is the undisputed winner. If you are building a computer vision system for the real world—where clouds pass over the sun, shadows move, and cameras adjust their exposure—you must use ZNCC to ensure your tracking boxes don't wander off.
+
+---
