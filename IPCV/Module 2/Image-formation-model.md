@@ -336,6 +336,46 @@ When you put it all together, the entire pipeline is expressed in one elegant fo
 $$m = K \cdot [R | t] \cdot M_W$$
 
 
+
 *(Where $K$ is the $3 \times 3$ Intrinsic Matrix, and $[R | t]$ is the $3 \times 4$ Extrinsic Matrix).*
+
+---
+
+
+
+This slide brings us to the exact mathematical definition of the **Extrinsic Parameters** we've been talking about. We are zooming in on the jump from the World Reference Frame (WRF) to the Camera Reference Frame (CRF).
+
+Before we can figure out which pixels light up on a screen, we first have to answer a purely 3D question: *"If a tree is at coordinate (100, 50, 20) in the world, where is that tree relative to my camera lens?"*
+
+This is solved using **Rigid Motion** (also called a Roto-Translation). It is called "rigid" because the tree isn't warping, bending, or scaling; we are simply shifting our perspective of it.
+
+Here is the breakdown of the master equation on the slide: 
+
+$$M_c = \mathbf{R} M_w + \mathbf{t}$$
+
+### 1. The World Point ($M_w$)
+
+This is the $3 \times 1$ vector on the right: $[x_W, y_W, z_W]^T$. It represents the fixed location of your object in the global world.
+
+### 2. The Rotation Matrix ($\mathbf{R}$)
+
+This is the $3 \times 3$ matrix filled with $r$ values.
+
+* **What it does:** It defines the camera's orientation (Pan, Tilt, and Roll).
+* **How it works:** It mathematically spins the world coordinates so that the camera's Z-axis is pointing straight forward out of the lens, and the X/Y axes align perfectly with the camera sensor.
+
+### 3. The Translation Vector ($\mathbf{t}$)
+
+This is the $3 \times 1$ vector on the far right: $[t_1, t_2, t_3]^T$.
+
+* **What it does:** It defines the physical $X, Y, Z$ location of the camera in the world.
+* **How it works:** It physically shifts the origin $(0,0,0)$ of the universe away from its original global position and drops it exactly into the center of the camera's lens.
+
+### 4. The Result ($M_c$)
+
+After you multiply the world point by the rotation matrix and add the translation vector, you get the final $3 \times 1$ vector on the left: $[x_C, y_C, z_C]^T$.
+You now know exactly how far left/right ($X$), up/down ($Y$), and deep ($Z$) the object is *from the perspective of the camera lens*.
+
+*(Note: Once you have $M_c$, you are finally ready to plug it into the Intrinsic matrix ($K$) from the previous slides to flatten it into 2D pixels!)*
 
 ---
