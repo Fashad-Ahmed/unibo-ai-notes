@@ -44,3 +44,49 @@ The slide ends with a note of relief: "Implementing a camera calibration softwar
 OpenCV (C++ and Python) uses the cv2.calibrateCamera() function.
 
 MATLAB has a dedicated, easy-to-use GUI called the Camera Calibration Toolbox.
+
+![alt text](image-8.png)
+
+
+![alt text](image-9.png)
+
+
+Zhang's Method: The Industry Standard for Calibration
+
+Zhang's method (published in 2000) revolutionized computer vision because it proved you don't need an expensive 3D calibration box. You can calibrate a camera using just a flat piece of paper (a planar pattern) shown from a few different angles.
+
+The algorithm works in four major phases, starting with rough mathematical guesses and ending with a massive, highly precise optimization loop.
+
+Phase 1: Data Collection (Blue Box)
+
+Acquire $n$ images: You take several photos (usually 10 to 20) of a flat checkerboard from different angles and distances.
+
+$c$ internal corners: A computer algorithm scans each image and finds the exact $(u, v)$ pixel coordinates of the checkerboard intersections.
+
+Phase 2: Homographies (Top Green & Orange Boxes)
+
+Because the checkerboard is perfectly flat, we can assume its $Z$-coordinate is always $0$. This magically simplifies our $3 \times 4$ Camera Matrix into a $3 \times 3$ matrix called a Homography ($H$).
+
+Compute $H_i$: For every single image ($i$), the computer calculates a rough Homography matrix that maps the flat 3D checkerboard plane to the flat 2D image plane.
+
+Refine $H_i$: It tweaks these matrices to minimize the Reprojection Error.
+
+What is Reprojection Error? It is the distance in pixels between where the algorithm found the corner in the photo, and where the math predicts the corner should be. We want this error to be as close to 0 as possible.
+
+Phase 3: The "Initial Guesses" (Middle Green Boxes)
+
+Now that the computer has a set of highly accurate Homographies ($H_i$), it uses a clever set of linear algebra formulas to rip those Homographies apart into our standard camera parameters:
+
+Guess $A$ (Intrinsics): It mathematically extracts the focal lengths ($f_u, f_v$) and principal point ($u_0, v_0$). Notice there is only one $A$ matrix, because the camera's internal hardware doesn't change between photos.
+
+Guess $R_i$ and $t_i$ (Extrinsics): It calculates where the camera was physically located for each of the $n$ images.
+
+Guess $k$ and $p$ (Distortion): It calculates a rough starting guess for the radial and tangential lens bending.
+
+Phase 4: Global Non-Linear Optimization (Bottom Orange Box)
+
+This is the grand finale. The "initial guesses" from Phase 3 are pretty good, but they were calculated in pieces and rely on linear approximations.
+
+To get perfect, sub-pixel accuracy, Zhang's method takes all the parameters ($A$, all the $R_i$'s and $t_i$'s, and the distortion coefficients $k, p$) and throws them into a giant calculus optimization engine (usually the Levenberg-Marquardt algorithm).
+
+It slightly nudges all the numbers up and down simultaneously, projecting the 3D points through the complete, non-linear image formation pipeline we learned in the last module, until the global reprojection error across all $n$ images is absolutely minimized.
