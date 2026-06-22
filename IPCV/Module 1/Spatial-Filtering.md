@@ -1,4 +1,4 @@
-This is a different professor's lecture (Prof. Lisanti, Part 1 of the course — image filtering fundamentals), and it's actually the **direct prerequisite** to the NLM exam question you got before. Let's go through it completely, building everything from the ground up, exam-ready.
+
 
 # The big picture of this lecture
 
