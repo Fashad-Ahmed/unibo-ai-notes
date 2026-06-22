@@ -1,1395 +1,302 @@
+This is a different professor's lecture (Prof. Lisanti, Part 1 of the course — image filtering fundamentals), and it's actually the **direct prerequisite** to the NLM exam question you got before. Let's go through it completely, building everything from the ground up, exam-ready.
 
-### What an image filter actually does
+# The big picture of this lecture
 
-An image filter is just a rule for computing a new pixel value using its neighbors.
+This lecture answers one question across many angles: **how do you remove noise from an image without destroying real image content?** It builds up a family of filters in increasing sophistication: mean → Gaussian → median → bilateral → non-local means — each one fixing a specific weakness of the previous one. Let's trace that chain carefully, because that's exactly how exam questions on this material are structured.Now let's go through every section in full depth.
 
-Instead of looking at one pixel in isolation, you take a **small window** (called a *neighborhood* or *support*) around it—say a 3×3 or 5×5 patch—and combine those values to produce a new value.
-
-* If the rule **averages** neighbors → you smooth noise
-* If it **emphasizes differences** → you highlight edges
-
-So filters are local operations applied across the whole image.
-
----
-
-### Why filters are useful
-
-By changing how you combine neighboring pixels, you can achieve different effects:
-
-* **Denoising** → remove random variations
-* **Sharpening / edge enhancement** → highlight boundaries
-* **Feature extraction** → detect patterns like edges, corners, textures
-
-These are foundational steps in Computer Vision.
-
----
-
-### Linear and Translation-Equivariant (LTE) filters
-
-This sounds intimidating, but it boils down to two simple properties:
-
-#### 1. Linear
-
-The filter behaves nicely with addition and scaling:
-
-* Filtering (A + B) = filtering(A) + filtering(B)
-* Filtering (k·A) = k·filtering(A)
-
-This makes analysis easier and connects directly to signal processing math.
-
----
-
-#### 2. Translation-equivariant
-
-If you shift the input image, the output shifts the same way.
-
-* Move an object to the right → filtered result also moves right
-* The filter doesn’t “care” where something is, only what it looks like
-
-This is crucial for detecting patterns anywhere in an image.
-
----
-
-### Convolution: how LTE filters are applied
-
-LTE filters are implemented using **2D convolution**, a core idea from Convolution.
-
-Think of it like this:
-
-1. Take a small matrix (called a **kernel** or **filter**)
-2. Place it over a patch of the image
-3. Multiply corresponding values
-4. Sum them up → that’s the new pixel value
-5. Slide the kernel across the whole image
-
-The kernel is also called a **point spread function**, because it defines how a single pixel’s influence spreads to its neighbors.
-
----
-
-### Example intuition
-
-A simple blur filter kernel:
-
-[
-\frac{1}{9}
-\begin{bmatrix}
-1 & 1 & 1 \
-1 & 1 & 1 \
-1 & 1 & 1
-\end{bmatrix}
-]
-
-This averages nearby pixels → reduces noise but softens details.
-
-An edge detector kernel:
-
-[
-\begin{bmatrix}
--1 & -1 & -1 \
--1 & 8 & -1 \
--1 & -1 & -1
-\end{bmatrix}
-]
-
-This highlights intensity changes → reveals edges.
-
----
-
-### Connection to CNNs
-
-In Convolutional Neural Networks:
-
-* The “filters” are **learned automatically** instead of manually designed
-* Each filter detects patterns (edges, textures, shapes)
-* Because convolution is translation-equivariant, the network can detect features anywhere in the image
-
-So CNNs are basically stacking many learned LTE filters.
-
----
-
-### Big picture
-
-* Filters = local rules applied across an image
-* LTE filters = a mathematically clean and powerful subset
-* Convolution = the mechanism that applies them
-* CNNs = systems that learn these filters automatically
-
----
-
-
-# Step-by-step: how convolution works
-
-Imagine a tiny grayscale image (values 0–255):
-
-[
-\begin{bmatrix}
-10 & 10 & 10 \
-10 & 50 & 10 \
-10 & 10 & 10
-\end{bmatrix}
-]
-
-And a simple **edge detection kernel**:
-
-[
-\begin{bmatrix}
--1 & -1 & -1 \
--1 & 8 & -1 \
--1 & -1 & -1
-\end{bmatrix}
-]
-
----
-
-### Apply the filter to the center pixel
-
-We multiply element-by-element and sum:
-
-[
-(10×-1) + (10×-1) + (10×-1) \
-
-* (10×-1) + (50×8) + (10×-1) \
-* (10×-1) + (10×-1) + (10×-1)
-  ]
-
-[
-= -10 -10 -10 -10 + 400 -10 -10 -10 -10 = 320
-]
-
- The result is **large**, meaning:
-
-* The center pixel is very different from neighbors
-* So it's likely an **edge or feature**
-
----
-
-### Slide across the image
-
-You repeat this for every pixel (sliding window).
-That sliding process is exactly what Convolution does.
-
----
-
-# Python example (OpenCV)
-
-Here’s a minimal working example using OpenCV:
-
-```python
-import cv2
-import numpy as np
-
-# Load grayscale image
-img = cv2.imread("image.jpg", cv2.IMREAD_GRAYSCALE)
-
-# 1. Blur kernel (denoising)
-blur_kernel = np.ones((3, 3), np.float32) / 9
-
-# 2. Edge detection kernel
-edge_kernel = np.array([
-    [-1, -1, -1],
-    [-1,  8, -1],
-    [-1, -1, -1]
-])
-
-# Apply filters
-blurred = cv2.filter2D(img, -1, blur_kernel)
-edges = cv2.filter2D(img, -1, edge_kernel)
-
-# Show results
-cv2.imshow("Original", img)
-cv2.imshow("Blurred (Denoised)", blurred)
-cv2.imshow("Edges", edges)
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-```
-
----
-
-# What’s happening in practice
-
-* `filter2D` performs the convolution operation
-* The **kernel defines behavior**:
-
-  * Averaging kernel → smooths noise
-  * Edge kernel → highlights intensity changes
-
----
-
-# Link to CNNs
-
-In Convolutional Neural Networks:
-
-* Instead of manually choosing kernels like above
-* The network **learns the kernel values automatically**
-* Early layers often learn edge detectors similar to the one we used
-
----
-
-# Key intuition to remember
-
-* Kernel = “what pattern am I looking for?”
-* Convolution = “scan the image for that pattern”
-* Output value = “how strongly that pattern exists here”
-
-
-Understood.
-
-Let’s go a bit deeper and make padding and stride crystal clear in an exam-oriented way.
-
----
-
-# 1. Stride
-
-**Definition:**
-Stride is the number of pixels the kernel moves at each step during convolution.
-
-### Cases
-
-* **Stride = 1**
-  The filter moves one pixel at a time → maximum overlap → detailed output
-
-* **Stride = 2 (or more)**
-  The filter skips pixels → fewer computations → smaller output
-
-### Key effect
-
-* Increasing stride reduces the **spatial resolution** of the output
-* It effectively performs **downsampling**
-
----
-
-# 2. Padding
-
-**Definition:**
-Padding adds extra pixels (usually zeros) around the border of the image.
-
-### Why padding is needed
-
-Without padding:
-
-* The kernel cannot fully cover border pixels
-* Output becomes smaller after each convolution
-
----
-
-### Types
-
-#### Valid padding (P = 0)
-
-* No padding
-* Output shrinks
-
-#### Same padding (P chosen properly)
-
-* Keeps output size equal to input size (if stride = 1)
-* Common in Convolutional Neural Networks
-
----
-
-# 3. Output size formula
-
-For each dimension (height or width):
-
-[
-\text{Output} = \frac{N - K + 2P}{S} + 1
-]
-
-Where:
-
-* (N) = input size
-* (K) = kernel size
-* (P) = padding
-* (S) = stride
-
-Important: the result must be an integer (otherwise the configuration is invalid or requires adjustment).
-
----
-
-# 4. Concrete example
-
-Input: 5 × 5
-Kernel: 3 × 3
-
-### Case 1: No padding, stride 1
-
-[
-(5 - 3)/1 + 1 = 3
-]
-
-Output: 3 × 3
-
-You lose the border.
-
----
-
-### Case 2: Padding = 1, stride 1
-
-[
-(5 - 3 + 2)/1 + 1 = 5
-]
-
-Output: 5 × 5
-
-Size is preserved.
-
----
-
-### Case 3: Padding = 1, stride 2
-
-[
-(5 - 3 + 2)/2 + 1 = 3
-]
-
-Output: 3 × 3
-
-Here you both preserve borders (via padding) and reduce size (via stride).
-
----
-
-# 5. Intuition summary
-
-* **Stride**
-
-  * Controls how densely you scan the image
-  * Larger stride → less detail, smaller output
-
-* **Padding**
-
-  * Controls what happens at the borders
-  * Prevents shrinking and preserves edge information
-
----
-
-# 6. Common exam traps
-
-* Forgetting the **+1** in the formula
-* Not checking that the output size is an integer
-* Assuming padding always keeps size (it only does when chosen correctly)
-* Confusing stride with kernel size
-
----
-
-# 7. Conceptual link
-
-In Computer Vision and deep learning:
-
-* Early layers often use **stride = 1** to preserve detail
-* Later layers may use **stride > 1** to reduce dimensionality
-* Padding is used to avoid losing important spatial information too early
-
----
-
-## 1. Linearity
-
-An operator ( T ) is **linear** if it satisfies:
-
-[
-T{\alpha, i_1(x,y) + \beta, i_2(x,y)}
-= \alpha, T{i_1(x,y)} + \beta, T{i_2(x,y)}
-]
-
-where:
-
-* ( i_1, i_2 ) are input signals (images),
-* ( \alpha, \beta ) are constants,
-* ( o_1 = T{i_1}, ; o_2 = T{i_2} ).
-
-👉 Meaning: applying the operator to a weighted sum = weighted sum of outputs.
-
----
-
-## 2. Translation Equivariance
-
-An operator is **translation-equivariant** if shifting the input results in the same shift in the output:
-
-[
-T{ i(x - x', y - y') }
-= o(x - x', y - y')
-]
-
-👉 Meaning: the operator doesn’t care **where** something is, only **what** it is.
-
----
-
-## 3. Why this leads to Convolution
-
-Here’s the key result:
-
-> Any operator that is **both linear and translation-equivariant** can be written as a **convolution**.
-
-So:
-
-[
-o(x,y) = T{i(x,y)} = (i * h)(x,y)
-]
-
-where:
-
-* ( h(x,y) ) is the **impulse response** (or kernel),
-* ( * ) denotes convolution.
-
-Expanded:
-
-[
-o(x,y) = \sum_{u,v} i(u,v), h(x - u, y - v)
-]
-
----
-
-## 4. Intuition
-
-* **Linearity** → lets you decompose the image into simple components
-* **Translation equivariance** → ensures the same operation is applied everywhere
-* Together → the operator behaves like a **sliding filter** → convolution
-
----
-
-## 5. Practical Meaning (e.g., in CNNs)
-
-This is exactly why **convolutional layers** work:
-
-* Same filter applied across the image
-* Detects patterns regardless of position
-* Efficient and structured
-
-
-# Step 1: Build the image from impulses
-
-Any 2D signal ( i(x,y) ) can be written as a sum of shifted **impulses**:
-
-[
-i(x,y) = \sum_{u,v} i(u,v), \delta(x - u, y - v)
-]
-
-👉 Think of this as:
-
-* At every position ((u,v)), you place a spike (impulse)
-* Its weight is the pixel value ( i(u,v) )
-
-So the image is just a **sum of shifted impulses**.
-
----
-
-# Step 2: Apply the operator ( T )
-
-Apply ( T ) to both sides:
-
-[
-T{i(x,y)}
-= T\left{ \sum_{u,v} i(u,v), \delta(x - u, y - v) \right}
-]
-
----
-
-# Step 3: Use linearity
-
-Because ( T ) is linear:
-
-[
-= \sum_{u,v} i(u,v), T{\delta(x - u, y - v)}
-]
-
----
-
-# Step 4: Use translation equivariance
-
-Translation equivariance tells us:
-
-[
-T{\delta(x - u, y - v)}
-= h(x - u, y - v)
-]
-
-where:
-[
-h(x,y) = T{\delta(x,y)}
-]
-
-👉 This ( h ) is the **impulse response** (the output when input is a single spike).
-
----
-
-# Step 5: Put it all together
-
-[
-o(x,y) = \sum_{u,v} i(u,v), h(x - u, y - v)
-]
-
-And that is exactly **convolution**:
-
-[
-o(x,y) = (i * h)(x,y)
-]
-
----
-
-# Intuition (this is the important part)
-
-* Break image into **tiny spikes**
-* See how the system responds to **one spike** → gives kernel ( h )
-* Rebuild the output by summing all shifted responses
-
-👉 So convolution is just:
-
-> “Add up shifted copies of the impulse response, weighted by the input.”
-
----
-
-# Visual way to think about it
-
-Imagine:
-
-* ( h ) is a small filter (e.g., edge detector)
-* You **slide it across the image**
-* At each position, you compute a weighted sum
-
-That sliding process is exactly what the formula describes.
-
----
-
-# Why this matters
-
-This derivation explains:
-
-* Why filters are shared across space (CNNs)
-* Why convolution is the *only* operation with these properties
-* Why kernels fully define the system
-
----
-
-# 1) Numerical Example (3×3 image + 2×2 kernel)
-
-Take a small image:
-
-[
-i =
-\begin{bmatrix}
-1 & 2 & 3 \
-4 & 5 & 6 \
-7 & 8 & 9
-\end{bmatrix}
-]
-
-and a kernel:
-
-[
-h =
-\begin{bmatrix}
-1 & 0 \
-0 & -1
-\end{bmatrix}
-]
-
----
-
-## Step-by-step convolution
-
-We slide the kernel over the image and compute:
-
-[
-o(x,y) = \sum i(u,v), h(x-u, y-v)
-]
-
-For simplicity, we’ll compute **valid convolution** (no padding).
-
----
-
-### Top-left position
-
-[
-\begin{bmatrix}
-1 & 2 \
-4 & 5
-\end{bmatrix}
-\quad \text{with} \quad
-\begin{bmatrix}
-1 & 0 \
-0 & -1
-\end{bmatrix}
-]
-
-Compute:
-
-[
-(1 \cdot 1) + (2 \cdot 0) + (4 \cdot 0) + (5 \cdot -1)
-= 1 - 5 = -4
-]
-
----
-
-### Top-right
-
-[
-\begin{bmatrix}
-2 & 3 \
-5 & 6
-\end{bmatrix}
-]
-
-[
-2\cdot1 + 3\cdot0 + 5\cdot0 + 6\cdot(-1)
-= 2 - 6 = -4
-]
-
----
-
-### Bottom-left
-
-[
-\begin{bmatrix}
-4 & 5 \
-7 & 8
-\end{bmatrix}
-]
-
-[
-4 - 8 = -4
-]
-
----
-
-### Bottom-right
-
-[
-\begin{bmatrix}
-5 & 6 \
-8 & 9
-\end{bmatrix}
-]
-
-[
-5 - 9 = -4
-]
-
----
-
-## Final output
-
-[
-o =
-\begin{bmatrix}
--4 & -4 \
--4 & -4
-\end{bmatrix}
-]
-
----
-
-## What just happened (intuition)
-
-This kernel is basically computing:
-
-[
-\text{top-left} - \text{bottom-right}
-]
-
-So it’s detecting a kind of **diagonal contrast**.
-
----
-
-# 2) Convolution vs Correlation (VERY important)
-
-Here’s the subtle but critical difference:
-
----
-
-## Convolution
-
-[
-o(x,y) = \sum i(u,v), h(x-u, y-v)
-]
-
-👉 Kernel is **flipped** (both horizontally and vertically)
-
----
-
-## Correlation
-
-[
-o(x,y) = \sum i(u,v), h(x+u, y+v)
-]
-
-👉 Kernel is used **as-is (no flipping)**
-
----
-
-## Key Difference
-
-| Operation   | Kernel flipped? | Used in practice     |
-| ----------- | --------------- | -------------------- |
-| Convolution | ✅ Yes           | Math / theory        |
-| Correlation | ❌ No            | CNNs (almost always) |
-
----
-
-## Example of flipping
-
-Kernel:
-
-[
-\begin{bmatrix}
-1 & 2 \
-3 & 4
-\end{bmatrix}
-]
-
-Flipped (for convolution):
-
-[
-\begin{bmatrix}
-4 & 3 \
-2 & 1
-\end{bmatrix}
-]
-
----
-
-## Why CNNs “ignore” flipping
-
-In deep learning:
-
-* Kernels are **learned**
-* Whether flipped or not doesn’t matter—the network adjusts weights
-
-So frameworks like:
-
-* TensorFlow
-* PyTorch
-
-actually implement **correlation**, but call it “convolution”.
-
----
-
-# Final intuition
-
-* **Convolution** = flip + slide + multiply + sum
-* **Correlation** = slide + multiply + sum
-
-👉 Same mechanics, just one subtle flip difference.
-
-
----
-
-# 1) Finite image + kernel → why borders are a problem
-
-In theory, convolution assumes **infinite signals**.
-In practice:
-
-* Image = finite matrix (e.g., ( M \times N ))
-* Kernel = small matrix (e.g., ( 3 \times 3 ), ( 5 \times 5 ))
-
-👉 When the kernel reaches the **edges**, part of it falls *outside* the image.
-
-So the question is:
-
-> “What values do we use outside the image?”
-
----
-
-# 2) Two main strategies
-
-## A) CROP (a.k.a. “valid convolution”)
-
-* Only compute where the kernel **fully overlaps** the image
-* Ignore borders
-
-### Result:
-
-* Output is **smaller**
-
-Example:
-
-* ( 5 \times 5 ) image + ( 3 \times 3 ) kernel → ( 3 \times 3 ) output
-
-👉 Common in **classical image processing**
-
----
-
-## B) PAD (a.k.a. “same convolution”)
-
-* Extend the image artificially
-* Allows kernel to be applied everywhere
-
-### Result:
-
-* Output size is **same as input** (if padding chosen properly)
-
-👉 Preferred in **CNNs**, because:
-
-* Keeps spatial dimensions stable
-* Easier to stack layers
-
----
-
-# 3) Padding methods (this is the key part)
-
-Let’s say your 1D signal is:
-
-[
-[a ; b ; c ; d]
-]
-
-We extend it differently depending on the rule.
-
----
-
-## 1) Zero Padding
-
-[
-[0 ; 0 ; a ; b ; c ; d ; 0 ; 0]
-]
-
-👉 Most common in deep learning
-
-* Simple
-* But introduces **artificial dark borders**
-
----
-
-## 2) Replicate Padding (a.k.a. edge padding)
-
-[
-[a ; a ; a ; b ; c ; d ; d ; d]
-]
-
-👉 Border values are **repeated**
-
-* Avoids artificial zeros
-* Can create “flat” edges
-
----
-
-## 3) Reflect Padding
-
-[
-[c ; b ; a ; b ; c ; d ; c ; b]
-]
-
-👉 Mirror the signal **including edge**
-
-Pattern:
-
-* Left side mirrors inward
-* Edge value is repeated in reflection
-
----
-
-## 4) Reflect_101 (a.k.a. symmetric without repeating edge)
-
-[
-[d ; c ; b ; a ; b ; c ; d ; c]
-]
-
-👉 Mirror **without duplicating the border pixel**
-
-This is often used in libraries like OpenCV.
-
----
-
-# 4) Visual intuition (2D case)
-
-For a small image:
-
-[
-\begin{bmatrix}
-a & b \
-c & d
-\end{bmatrix}
-]
-
-### Zero padding:
-
-[
-\begin{bmatrix}
-0 & 0 & 0 \
-0 & a & b \
-0 & c & d \
-0 & 0 & 0
-\end{bmatrix}
-]
-
----
-
-### Replicate:
-
-[
-\begin{bmatrix}
-a & a & b \
-a & a & b \
-c & c & d \
-c & c & d
-\end{bmatrix}
-]
-
 ---
 
-### Reflect:
+# Part 1 — What is noise, and why does averaging remove it? (Slides 4–7)
 
-[
-\begin{bmatrix}
-d & c & d \
-b & a & b \
-d & c & d \
-b & a & b
-\end{bmatrix}
-]
+## The noise model
 
----
-
-# 5) Why different padding matters
-
-Padding affects:
-
-### 🔹 Edge behavior
-
-* Zero padding → artificial edges
-* Reflect → smoother transitions
-
-### 🔹 Feature detection
-
-* Bad padding can create **fake edges**
-* Good padding preserves structure
-
-### 🔹 CNN performance
-
-* Zero padding is standard because:
-
-  * Simple
-  * Works well with learned filters
-
----
-
-# 6) Summary
-
-* **CROP** → smaller output, no assumptions
-* **PAD** → same size, requires assumptions
+$$I_t(p) = \tilde I(p) + n_t(p), \qquad n_t(p) \sim N(0,\sigma) \text{ i.i.d.}$$
 
-Padding types:
+This is the foundational assumption of almost the entire lecture: a noisy observation $I_t(p)$ at pixel $p$ and time $t$ equals the **true, noiseless image value** $\tilde I(p)$ plus a **random noise term** $n_t(p)$ that is:
+- **Zero-mean** ($N(0,\sigma)$ — centered at 0, so noise doesn't systematically push values up or down, only scatters them).
+- **i.i.d.** (independent and identically distributed) — each pixel's noise draw is statistically independent of every other pixel's, and they all come from the same distribution.
 
-* Zero → simplest, most used
-* Replicate → repeats borders
-* Reflect → mirror including edge
-* Reflect_101 → mirror excluding edge
+## Denoising by averaging across time (Slide 5)
 
----
-
-
+If you had $T$ repeated noisy captures of the *same static* scene (e.g. $T=100$ photos of a still subject), average them pixel-by-pixel:
 
----
-
-# 1) Numerical example: how padding changes the result
+$$O(p) = \frac{1}{T}\sum_{t=1}^{T} I_t(p) = \frac{1}{T}\sum_{t=1}^{T}\big(\tilde I(p)+n_t(p)\big) = \tilde I(p) + \frac{1}{T}\sum_{t=1}^{T}n_t(p) \approx \tilde I(p)$$
 
-Take a simple image:
+**Why this works, precisely**: the true signal $\tilde I(p)$ is identical across all $t$ (static scene), so it survives averaging unchanged. The noise terms, being zero-mean and independent, **partially cancel each other out** when averaged — by the law of large numbers, the average of $T$ i.i.d. zero-mean random variables shrinks toward zero as $T$ grows (specifically, the variance of the average shrinks as $\sigma^2/T$). **The mean image is far less noisy** because you've essentially divided the noise's standard deviation by $\sqrt T$, while leaving the true signal completely untouched.
 
-[
-i =
-\begin{bmatrix}
-1 & 2 \
-3 & 4
-\end{bmatrix}
-]
+## The problem: what if you only have ONE image? (Slides 6–7)
 
-and a kernel:
+You don't have $T$ repeated captures — you have a single noisy photo. **The trick: trade the temporal average for a spatial average.** Instead of averaging the *same pixel* across *time*, average *nearby pixels* within the *same image*, assuming they likely share similar true underlying values (a reasonable assumption in smooth image regions).
 
-[
-h =
-\begin{bmatrix}
-1 & 1 \
-1 & 1
-\end{bmatrix}
-]
+**The key design question this immediately raises**: *how large should the neighborhood (support) $S$ be?* The slide states explicitly: **it's a trade-off** — bigger neighborhoods average over more noise samples (better denoising, lower residual noise), but also risk averaging together pixels whose *true* values are actually different (e.g. straddling an edge), which causes **blurring**. This single trade-off is the thread that the entire rest of the lecture pulls on.
 
-This kernel just **sums neighbors**.
+## The spatial denoising filter formula (Slide 7)
 
----
+$$O(p) = \frac{1}{|S|}\sum_{q\in S} I(q) = \frac{1}{|S|}\sum_{q\in S}\big(\tilde I(q)+n(q)\big) = \frac{1}{|S|}\sum_{q\in S}\tilde I(q) + \frac{1}{|S|}\sum_{q\in S}n(q) \approx \tilde I(q)$$
 
-## A) Without padding (CROP / valid)
+where $S$ is the **support** (the neighborhood of $p$ you average over), and $|S|$ is the number of pixels in it. This is algebraically the **exact same derivation** as the temporal-averaging case, just with the sum running over neighboring *pixels* instead of repeated *time samples* — same math, different averaging axis.
 
-Only one position fits:
+## Image filters, defined generally (Slide 7, bottom)
 
-[
-o = [1+2+3+4] = [10]
-]
+$$o(p) = f(S(p))$$
 
-👉 Output:
-[
-\begin{bmatrix}
-10
-\end{bmatrix}
-]
+**Image filters** are operators that compute a pixel's new intensity based on the intensities of pixels in a **neighborhood (support)** of $p$. They serve many purposes (denoising, sharpening/edge enhancement, etc.), and **Linear and Translation-Equivariant (LTE) operators** form a particularly important sub-class. This is the bridge into the signal-processing formalism next.
 
 ---
-
-## B) Zero padding
 
-Pad with zeros:
+# Part 2 — LTE operators and convolution (Slides 10–18)
 
-[
-\begin{bmatrix}
-0 & 0 & 0 \
-0 & 1 & 2 \
-0 & 3 & 4 \
-0 & 0 & 0
-\end{bmatrix}
-]
+## Defining the two properties precisely (Slides 10–11)
 
-Now compute all positions:
+Given a 2D operator $T$: $o(x,y) = T\{i(x,y)\}$:
 
-### Top-left:
+**Linearity:**
+$$T\{\alpha i_1(x,y)+\beta i_2(x,y)\} = \alpha\,o_1(x,y)+\beta\,o_2(x,y), \quad \text{where } o_1=T\{i_1\},\ o_2=T\{i_2\}$$
 
-[
-0+0+0+1 = 1
-]
+The operator's response to a weighted sum of inputs equals the same weighted sum of the individual responses — **superposition holds**.
 
-### Top-right:
+**Translation-equivariance:**
+$$T\{i(x-x_0,y-y_0)\} = o(x-x_0,y-y_0)$$
 
-[
-0+0+1+2 = 3
-]
+Shifting the input by $(x_0,y_0)$ shifts the output by exactly the same amount — the operator behaves identically no matter *where* in the image it's applied.
 
-### Bottom-left:
+## The fundamental theorem: LTE ⟺ convolution (Slide 11)
 
-[
-0+1+0+3 = 4
-]
+**If an operator is both linear and translation-equivariant, its output is *necessarily* given by convolving the input with the operator's impulse response** $h(x,y) = T\{\delta(x,y)\}$ (its response to a unit impulse, the Dirac delta):
 
-### Bottom-right:
+$$o(x,y) = T\{i(x,y)\} = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} i(\alpha,\beta)\,h(x-\alpha,y-\beta)\,d\alpha\,d\beta$$
 
-[
-1+2+3+4 = 10
-]
+**Why this matters conceptually**: this is the theoretical justification for *why* convolution is the right mathematical tool for so much of classical image processing — it's not an arbitrary choice, it's the **unique consequence** of demanding the two natural properties (linearity + shift-equivariance) from your filter. Anything you'd want a "well-behaved, position-independent linear filter" to do is *automatically* a convolution, by this theorem.
 
-👉 Output:
-[
-\begin{bmatrix}
-1 & 3 \
-4 & 10
-\end{bmatrix}
-]
+## Graphical view (Slide 13) — what the two operations inside the integral mean
 
-⚠️ Notice:
+The formula contains exactly two geometric operations on $h$:
+- **Reflection about the origin**: $h(x-\alpha,y-\beta)$, as a function of $(\alpha,\beta)$, is $h$ **flipped** (since the argument's sign on $\alpha,\beta$ is negative).
+- **Translation**: the flipped $h$ is then **shifted** so its origin sits at $(x,y)$.
 
-* Borders are **smaller values** → artificial effect from zeros
+You multiply this flipped-and-shifted $h$ against $i$, and integrate (sum up the product) — that integral value becomes the single output pixel at $(x,y)$. Then you repeat for every $(x,y)$.
 
----
-
-## C) Replicate padding
-
-Pad by repeating edges:
+## Properties of convolution (Slide 14) — memorize all four
 
-[
-\begin{bmatrix}
-1 & 1 & 2 \
-1 & 1 & 2 \
-3 & 3 & 4 \
-3 & 3 & 4
-\end{bmatrix}
-]
+$$o(x,y) = i(x,y)*h(x,y)$$
 
-Now:
+1. **Associative**: $f*(g*h) = (f*g)*h$
+2. **Commutative**: $f*g = g*f$
+3. **Distributive over sum**: $f*(g+h) = f*g+f*h$
+4. **Commutes with differentiation**: $(f*g)' = f'*g = f*g'$
 
-### Top-left:
+(Property 4 is a genuinely useful practical fact, e.g. it's exactly why you can compute an image's derivative by convolving with a derivative-of-Gaussian kernel in one step, instead of first smoothing then separately differentiating.)
 
-[
-1+1+1+1 = 4
-]
+## Correlation (Slide 15) — same idea, no flip
 
-### Top-right:
+$$i(x,y)\circ h(x,y) = \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} i(\alpha,\beta)\,h(x+\alpha,y+\beta)\,d\alpha\,d\beta$$
 
-[
-1+2+1+2 = 6
-]
+Note the **sign**: $h(x+\alpha,y+\beta)$ — a **plus**, not a minus like in convolution. This is the formal definition behind the change-of-variables argument that follows. The slide also explicitly derives the order-reversed version, correlation of $h$ wrt $i$:
 
-### Bottom-left:
+$$h(x,y)\circ i(x,y) = \int\int h(\alpha,\beta)\,i(x+\alpha,y+\beta)\,d\alpha\,d\beta$$
 
-[
-1+1+3+3 = 8
-]
+using the substitution $\xi = x+\alpha \Rightarrow \alpha=\xi-x$, $\eta=y+\beta\Rightarrow\beta=\eta-y$.
 
-### Bottom-right:
+**Crucial, explicitly stated fact**: *unlike convolution, correlation is NOT commutative*: $i\circ h \neq h\circ i$ in general.
 
-[
-1+2+3+4 = 10
-]
-
-👉 Output:
-[
-\begin{bmatrix}
-4 & 6 \
-8 & 10
-\end{bmatrix}
-]
-
-✔️ Much smoother than zero padding
-
----
+## Convolution vs correlation, fully reconciled (Slide 17) — the exact relationship to memorize
 
-## D) Reflect padding (intuitive result)
+$$\text{Convolution is commutative:} \quad i*h = h*i$$
+$$\text{Correlation is NOT commutative:} \quad i\circ h \neq h\circ i$$
+$$\text{If } h \text{ is an even function } (h(x,y)=h(-x,-y)): \quad i*h = h*i = h\circ i$$
 
-Would give values similar to replicate but:
+**Read this last line very carefully — it's the single most commonly mis-stated fact on exams.** When $h$ is **even** (symmetric about the origin), convolution and correlation *coincide* — but **only in this specific direction**: $i*h$ equals **$h\circ i$** (correlation of $h$ with respect to $i$), not $i\circ h$. And even in this special case, **correlation itself still never becomes commutative** — $i\circ h\neq h\circ i$ remains true regardless of whether $h$ is even. The evenness of $h$ only creates a bridge *between* convolution and one specific ordering of correlation; it does not make correlation symmetric in its own right.
 
-* Better preserves **gradients**
-* Less artificial flattening
+This explains a fact you already learned in the previous lecture: most CNN kernels are *learned*, generic (non-even) functions, so cross-correlation and true convolution genuinely differ for them — but for classic **hand-designed symmetric kernels** (like a symmetric Gaussian or mean filter, which are even functions), the practical distinction disappears and the two operations give identical results.
 
 ---
 
-# 2) How to compute padding size (“same” convolution)
+# Part 3 — Discrete convolution and practical implementation (Slides 18–20)
 
-Goal:
+## Discrete convolution formula (Slide 18)
 
-> Keep output size = input size
+$$O(i,j) = T\{I(i,j)\} = \sum_{m=-\infty}^{\infty}\sum_{n=-\infty}^{\infty} I(m,n)\,H(i-m,j-n)$$
 
----
-
-## General formula
-
-For 1D (applies per dimension in 2D):
+where $H(i,j)=T\{\delta(i,j)\}$ is the **kernel** — the response to the **Kronecker delta** (the discrete analogue of the Dirac delta: 1 at the origin, 0 everywhere else). All four convolution properties from the continuous case carry over unchanged to the discrete case.
 
-[
-\text{output} =
-\left\lfloor
-\frac{N + 2P - K}{S}
-\right\rfloor + 1
-]
+## The practical, finite-kernel version (Slides 19–20)
 
-Where:
+Since real kernels are finite (size $(2k+1)\times(2k+1)$, centered on the pixel), the infinite sum collapses to a finite one:
 
-* ( N ) = input size
-* ( K ) = kernel size
-* ( P ) = padding
-* ( S ) = stride
+$$O(i,j) = \sum_{m=-k}^{k}\sum_{n=-k}^{k} K(m,n)\,I(i-m,j-n)$$
 
----
-
-## For “same” output
+**Mechanically**: slide the kernel across every pixel position of the input image; at each position, compute the weighted sum of the corresponding $(2k+1)\times(2k+1)$ neighborhood, weighted by the (flipped, per true convolution) kernel values; write that single number into the **output** image at that position. **Critical practical warning explicitly stated**: *do not overwrite the input matrix while computing* — you need the original, unmodified input values for every subsequent kernel position, so the output must be written to a separate buffer.
 
-We want:
+## The border problem (Slide 20) — what happens at the edges
 
-[
-\text{output} = N
-]
+When the kernel is centered near the image boundary, part of its footprint falls **outside** the image — there's no data there. **Two main solution families:**
 
-So:
+1. **CROP**: simply don't compute output values for border pixels where the kernel would extend past the edge — the output image ends up **smaller** than the input. Common in classical image processing.
+2. **PAD**: artificially extend the input with extra border pixels before convolving, so the kernel always has valid data to read, and the output stays the **same size** as the input. **Preferred in CNNs** (this directly connects back to the "same" padding concept from the previous lecture).
 
-[
-N = \frac{N + 2P - K}{S} + 1
-]
+**Padding strategies, all explicitly listed (memorize the names and exact behavior)**:
+- **Zero-padding**: pad with constant value 0.
+- **Replicate**: repeat the edge pixel value outward, e.g. `aaa|Iabcd|ddd` (the slide's shorthand `aaaIa....dIddd` means: the leftmost real pixel `a` gets copied leftward, the rightmost real pixel `d` gets copied rightward).
+- **Reflect**: mirror the image content across the border without repeating the edge pixel itself, e.g. `cba|abcd...dfg|gfd`.
+- **Reflect_101**: mirror across the border, but this time the edge pixel itself participates only once / pattern includes it differently, e.g. `dcb|abcd...efgh|gfe` (a slightly different mirroring convention than plain reflect — the "101" naming, from OpenCV's convention, indicates the boundary pixel is *not* duplicated, unlike plain `reflect`).
 
 ---
 
-## Case: stride = 1 (most common)
+# Part 4 — Mean filter (Slide 21) — the simplest linear filter
 
-[
-N = N + 2P - K + 1
-]
+The **mean filter** replaces each pixel with the **average intensity** over a chosen neighborhood. It's an LTE operator, so it's expressible as convolution, with kernel:
 
-Solve:
+$$K_{3\times3} = \frac{1}{9}\begin{bmatrix}1&1&1\\1&1&1\\1&1&1\end{bmatrix} \qquad K_{5\times5}=\frac{1}{25}\begin{bmatrix}1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\\1&1&1&1&1\end{bmatrix}$$
 
-[
-2P = K - 1
-\quad \Rightarrow \quad
-P = \frac{K - 1}{2}
-]
-
----
+**Key signal-processing classification**: the mean filter performs **low-pass filtering** — in image-processing language, this is called **smoothing**. Low frequencies (smooth, gradual intensity changes) pass through; high frequencies (sharp transitions — edges, fine texture) get attenuated. **Purpose**: usually denoising, though sometimes simply to suppress unwanted fine-scale detail that would interfere with a downstream analysis task.
 
-## Examples
+**A nice practical/efficiency fact, explicitly stated**: mean filtering is **inherently fast because multiplications aren't needed** — since every kernel weight is the same constant ($1/9$ or $1/25$), you can simply **sum** the neighborhood and divide once at the end, rather than multiplying each pixel by its (identical) weight individually. (This is also exactly why the **separable, running-sum/box-filter implementation** — computing a row-sum first, then a column-sum — is so cheap; more on separability below.)
 
-### 3×3 kernel
+## Mean filter in action — and its fundamental weakness (Slides 24–25)
 
-[
-P = (3-1)/2 = 1
-]
+Given Gaussian noise ($\mu=0,\sigma=8$), comparing $3\times3$ vs $5\times5$ mean smoothing: **larger kernels denoise more strongly but blur more**, exactly the trade-off predicted in Part 1.
 
-👉 Add 1 pixel border
+**The critical limitation, demonstrated by the slide's pointed question** ("the ideal noiseless value of these pixels is the same? What happens here?"): a uniform, *unweighted* average is blind to **where an edge sits** within the neighborhood. If the support straddles a real edge (low intensities on one side, high intensities on the other), the mean filter **mixes them together regardless**, producing an output value that doesn't correctly represent *either* side — this **blurs edges**, smearing sharp transitions into smooth ramps. **Linear filtering reduces noise, but always at the cost of blurring the image** — this is the single biggest weakness that every subsequent, more sophisticated filter in the lecture exists to fix.
 
 ---
 
-### 5×5 kernel
+# Part 5 — Gaussian filter (Slides 27–31)
 
-[
-P = (5-1)/2 = 2
-]
+## Definition (Slide 27)
 
-👉 Add 2 pixels border
+The **Gaussian filter** is an LTE operator whose impulse response is a **2D Gaussian function** with zero mean and a constant, diagonal covariance matrix (i.e., circularly symmetric — equal spread in every direction, no correlation between $x$ and $y$). Why is this an improvement over the plain mean filter? Because instead of weighting **every** neighbor **equally**, it weights neighbors by **distance from the center**: nearby pixels get high weight, farther pixels get progressively lower weight, following the smooth bell-curve falloff of the Gaussian. This produces smoother, more natural-looking blur (less "blocky" than a flat box average) — but **note**: it still doesn't know anything about *intensity* differences, only spatial distance — so it **still blurs across edges**, just somewhat more gently than the mean filter (this is exactly why bilateral filtering, later, is needed).
 
----
-
-### Even kernel (e.g., 4×4)
-
-[
-P = (4-1)/2 = 1.5
-]
+## Choosing the kernel size given σ (Slide 28)
 
-⚠️ Not symmetric → frameworks handle this by:
+Since the true Gaussian has **infinite extent**, you must truncate it to a finite kernel. The trade-offs:
+- **Larger size** → more accurate approximation of the true continuous Gaussian, but **higher computational cost**.
+- **The Gaussian shrinks rapidly away from the origin** — so beyond a few standard deviations, contributions become negligible and can safely be dropped.
 
-* asymmetric padding (e.g., 1 left, 2 right)
+**Rule of thumb, exactly as given**: the interval $[-3\sigma,+3\sigma]$ captures **99% of the area (energy)** of the Gaussian, so a typical choice is a $(2k+1)\times(2k+1)$ kernel with $k=3\sigma$. (The slide gives the 1D values at $x=-3,-2,-1,0,1,2,3$ as $0.0044, 0.054, 0.242, 0.3989, 0.242, 0.054, 0.0044$ — note these visibly sum to nearly 1, and the tails at $\pm3$ are already tiny, confirming the rule of thumb numerically.)
 
----
+## Separability — the major efficiency trick (Slide 30)
 
-# 3) Key takeaways
+**Key mathematical fact**: a 2D Gaussian is the **product of two independent 1D Gaussians**:
 
-* Padding is not just technical—it **changes results**
-* Zero padding → introduces artificial edges
-* Replicate/reflect → more natural borders
-* CNNs use zero padding mainly for **simplicity and consistency**
+$$G(x,y) = G(x)\cdot G(y)$$
 
----
+This means the 2D convolution can be **factored into two sequential 1D convolutions** — convolve along $x$ first, then convolve the result along $y$ (or vice versa — order doesn't matter, by commutativity).
 
-# 4) Mental model
+**Cost comparison, exactly as derived in the slide:**
 
-* Kernel = “window”
-* Padding = “what exists outside the image”
-* Different padding = different assumptions about the world beyond the image
+$$\text{2D filter cost: } N_{op} = 2(2k+1)^2 \qquad \text{1D×2 filter cost: } N_{op} = 2\cdot2(2k+1)$$
 
----
+(the factor "2" inside accounts for multiply+add per tap; applying it twice for the separable version accounts for doing it once per pass, along each of the two axes.)
 
+**Speed-up factor:**
 
-A **Gaussian filter** is one of the most important smoothing (blurring) filters in image processing and computer vision. It is widely used because it removes noise while preserving overall structure better than simple averaging.
+$$S = \frac{2(2k+1)^2}{2\cdot2(2k+1)} = \frac{2k+1}{2} = k+\frac{1}{2}$$
 
----
+**The takeaway, stated very directly**: the bigger your kernel (larger $k$), the **bigger the speed-up** from exploiting separability — for large kernels, this isn't a minor optimization, it's the difference between $O(k^2)$ and $O(k)$ work per pixel, an asymptotic improvement, not just a constant-factor one.
 
-# 1) What is a Gaussian filter?
+## The role of σ as a "scale" parameter (Slide 31)
 
-A Gaussian filter replaces each pixel with a **weighted average of its neighbors**, where:
+**Higher $\sigma$ → stronger smoothing.** Mechanistic reason given directly: as $\sigma$ increases, the Gaussian curve flattens out, so **the weight given to nearby points decreases while the weight given to farther points increases** — the filter effectively "reaches further" for its averaging, at the cost of local precision.
 
-* nearby pixels matter a lot
-* far pixels matter very little
-* weights follow a **Gaussian (bell-shaped) distribution**
+**Conceptual reframing, worth quoting exactly**: *"filtering with a chosen $\sigma$ can be thought of as setting the 'scale' of interest to analyze image content."* As $\sigma$ grows, **fine details vanish and only larger-scale structures remain visible** — this is the seed idea behind multi-scale image analysis (e.g. image pyramids, scale-space theory): $\sigma$ isn't just a "blur knob," it's a literal **dial selecting which spatial scale of structure you want to look at**.
 
 ---
 
-# 2) The Gaussian function (kernel definition)
+# Part 6 — Impulse noise and the Median filter (Slides 32–34)
 
-In continuous form (2D):
+## The failure mode that motivates the median filter (Slide 32)
 
-[
-G(x,y) = \frac{1}{2\pi\sigma^2} \exp\left(-\frac{x^2 + y^2}{2\sigma^2}\right)
-]
+**Impulse noise** (aka **salt-and-pepper noise**) is fundamentally different from Gaussian noise: instead of every pixel getting a small random perturbation, a **small fraction of pixels get replaced entirely** by extreme values (very bright "salt" or very dark "pepper"), while the rest of the pixels remain completely clean.
 
-Where:
+**Why mean/Gaussian filtering fails here, explicitly stated**: *"Linear filtering is ineffective toward impulse noise (and blurs the image)."* The reasoning: a linear average is **extremely sensitive to outliers** — a single wildly-extreme corrupted pixel inside an averaging window **drags the entire average toward that extreme value**, contaminating the *whole* neighborhood's output, not just the corrupted pixel itself. Worse, you still get blurring on top of that, since it's still a linear blend.
 
-* ( \sigma ) = standard deviation (controls blur strength)
-* ( (x,y) ) = distance from center
+## Median filter (Slide 33)
 
----
-
-# 3) What the kernel looks like (example)
-
-A typical **3×3 Gaussian kernel**:
+**Definition**: a **non-linear** filter — each pixel's intensity is replaced by the **median** value within its neighborhood (the value that falls exactly in the middle when all neighborhood intensities are sorted).
 
-[
-\frac{1}{16}
-\begin{bmatrix}
-1 & 2 & 1 \
-2 & 4 & 2 \
-1 & 2 & 1
-\end{bmatrix}
-]
+**Why this fixes impulse noise specifically, mechanistically**: outliers (corrupted pixels) tend to land at the **extreme top or bottom** of the sorted intensity list within a window — but the median, by definition, **ignores extreme values entirely** and only reports the middle-ranked value. So as long as corrupted pixels are a **minority** within the window, the median is computed entirely from the *clean* majority and is essentially unaffected by however extreme the corrupted minority's values are.
 
-Or a **5×5 version** (stronger smoothing):
+**Bonus property, explicitly stated**: median filtering tends to **preserve sharper edges** than linear filters like mean/Gaussian — because it picks an *actual observed value* from the neighborhood (rather than computing a blended average of dissimilar values across an edge), it doesn't create the smooth, blended "ramp" artifact that linear averaging introduces at edges.
 
-[
-\frac{1}{256}
-\begin{bmatrix}
-1 & 4 & 6 & 4 & 1 \
-4 & 16 & 24 & 16 & 4 \
-6 & 24 & 36 & 24 & 6 \
-4 & 16 & 24 & 16 & 4 \
-1 & 4 & 6 & 4 & 1
-\end{bmatrix}
-]
+## Practical demonstration and an important limitation (Slide 34)
 
-👉 Notice:
+Given impulse noise (+100 intensity offset, 5% of pixels randomly affected), a $3\times3$ median filter denoises effectively; applying it **twice** cleans up further.
 
-* center weight is largest
-* values decrease smoothly outward
+**Crucial limitation, explicitly stated**: *"Gaussian-like noise, such as sensor noise, cannot be dealt with by the Median, as this would require computing new noiseless intensities."* The median can only ever **output a value that was already present** in the neighborhood — it never computes a genuinely new, blended value. This is perfect for impulse noise (where the *true* signal is unaffected at most pixels, you just need to reject the rare corrupted outlier) but **useless for Gaussian noise** (where *every* pixel's true value has been perturbed somewhat, so what you actually need is averaging/blending to estimate a new value that was never directly observed). **Suggested combination**: apply median first (to remove outliers), then follow with linear filtering (to denoise the remaining Gaussian-like component) — using each tool for the noise type it's actually suited to.
 
 ---
 
-# 4) What it does to an image
+# Part 7 — Bilateral Filter (Slides 35–37) — finally, edge-aware denoising
 
-Applying a Gaussian filter:
+## Motivation
 
-### Before:
+We now have: mean/Gaussian filters denoise Gaussian noise well but blur edges; median filters preserve edges but only handle impulse noise. **The bilateral filter is designed to denoise Gaussian-like noise *without* blurring edges** — it's explicitly labeled **"edge preserving smoothing."**
 
-* sharp edges
-* noise present
+## The formula, term by term (Slide 35)
 
-### After:
+$$O(p) = \sum_{q\in S} H(p,q)\cdot I_q$$
 
-* smooth image
-* reduced noise
-* blurred edges
+$$H(p,q) = \frac{1}{W(p)}\,G_{\sigma_d}\big(d_s(p,q)\big)\cdot G_{\sigma_r}\big(d_o(I_p,I_q)\big)$$
 
----
-
-# 5) Why Gaussian filtering works well
+with:
 
-## Key reasons:
+- **Spatial distance**: $d_s(p,q) = \|p-q\| = \sqrt{(u_p-u_q)^2+(v_p-v_q)^2}$ — ordinary Euclidean distance between pixel *locations*.
+- **Range (intensity) distance**: $d_o(I_p,I_q) = |I_p-I_q|$ — the difference between the two pixels' *intensity values*.
+- **Normalization factor (unity gain)**: $W(p) = \sum_{q\in S} G_{\sigma_d}(d_s(p,q))\,G_{\sigma_r}(d_o(p,q))$ — ensures the weights $H(p,q)$ sum to 1 over the neighborhood, so the filter is a proper weighted average (preserves overall brightness, doesn't arbitrarily amplify or dim the image).
 
-### ✔ Smooth weighting
+**The key structural idea**: the weight $H(p,q)$ is the **product of two separate Gaussian terms** — one based purely on *how far away* $q$ is spatially, the other based purely on *how different* $q$'s intensity is from $p$'s. **A neighbor only gets a high overall weight if it is BOTH close in space AND similar in intensity** — multiplying two Gaussians means either factor alone being small (far away, OR very different intensity) is enough to suppress the combined weight.
 
-Unlike averaging filters, it avoids harsh changes.
+## Why this preserves edges (Slide 37)
 
-### ✔ Natural model of noise
+*"Neighbouring pixels take a larger weight as they are both closer and more similar to the central pixel. At a pixel nearby an edge, the neighbours falling on the other side of the edge look quite different and thus cannot contribute significantly to the output value due to their weights being small."*
 
-Many real-world noises approximate Gaussian distributions.
+This is the entire mechanism in one sentence: at an edge, pixels on the **other side** have very different intensity from the center pixel $p$ — so even though they may be spatially close, the **range term** $G_{\sigma_r}(d_o)$ crushes their weight toward zero. The filter effectively **only averages within the same "side" of the edge**, never blending across it — hence "edge preserving."
 
-### ✔ No ringing artifacts
+The slide's worked example: a step-edge 100 gray-levels wide, with $\sigma_d=5,\sigma_r=50$, shows the weight map $H(p,q)$ at a pixel just across the edge in the brighter region — visually, you'd see weight concentrated almost entirely on the bright side, near-zero on the dark side, even though both sides are spatially close.
 
-Better than some frequency-domain filters.
+This is exactly the limitation/contrast the NLM exam answer we built earlier referenced: bilateral *is* a non-linear, edge-aware filter — but it's still fundamentally **local** (the support $S$ is a small neighborhood around $p$). **Non-local means is the next, final step**: take this exact idea — weight by similarity, not just distance — but stop restricting the search to a small local window, and instead compare entire **patches** (not single-pixel intensities) across the **whole image**.
 
 ---
-
-# 6) Important property (VERY useful)
-
-Gaussian filtering is:
 
-> **separable**
+# Part 8 — Non-Local Means (Slides 39–40)
 
-Meaning:
+This connects directly to what we covered in detail in your earlier exam answer, but now let's tie it precisely to *this* lecture's own notation and framing, since that's what your professor will expect verbatim.
 
-[
-2D ; Gaussian = (1D ; Gaussian_x) * (1D ; Gaussian_y)
-]
+## The key idea, exactly as stated
 
-So instead of a 2D convolution:
+*"The key idea is that the similarity among patches spread over the image can be deployed to achieve denoising."* Just like the bilateral filter weighted by *intensity similarity*, NLM weights by similarity too — but the similarity is now measured **between entire local patches**, $N_p$ and $N_q$, not single pixel intensities, and $q$ is searched for across a **much larger region** $S$ (potentially the whole image), not just a small local neighborhood.
 
-* first blur horizontally
-* then vertically
+## Worked numerical example given directly in the slide (Slide 40)
 
-👉 Much faster computation.
+- Noise level: Gaussian, $\sigma=20$.
+- **Patch size** $N = 7\times7$.
+- **Search window size** $S = 21\times21$.
+- **Filtering parameter** $h = 10\cdot\sigma$.
 
----
-
-# 7) Effect of ( \sigma )
-
-| σ value        | Effect                      |
-| -------------- | --------------------------- |
-| small (≈0.5–1) | slight smoothing            |
-| medium (≈1–2)  | noticeable blur             |
-| large (>2)     | strong blur, loss of detail |
-
----
-
-# 8) Why it is used in CNNs and vision
+This is a genuinely useful, concrete, memorizable example of realistic hyperparameter values — if your exam asks "give typical values for NLM's hyperparameters," these numbers (patch $7\times7$, search window $21\times21$, $h\approx10\sigma$) are a perfect, textbook-sourced answer.
 
-Gaussian filters are used for:
+The comparative result shown: against the same Gaussian-noise-corrupted image, a plain **Gaussian filter** denoises but blurs detail; **NLM** denoises while **preserving fine texture and detail far better**, precisely because it can borrow statistical strength from many genuinely-similar patches scattered across the whole image, rather than being limited to a small local Gaussian-weighted average.
 
-* noise reduction (preprocessing)
-* scale-space representation
-* edge detection pipelines (Sobel, Canny)
-* anti-aliasing before downsampling
-
 ---
-
-# 9) Intuition
 
-Think of it as:
+## How this lecture connects to everything else you've already studied
 
-> “Each pixel is replaced by a soft spotlight of its neighbors, where the center matters most.”
+This is genuinely the **foundation layer** beneath two things you've already worked through:
+- It's the **direct prerequisite** to the NLM exam question from your second uploaded paper — now you have the full derivation chain: LTE theorem → convolution → mean filter → Gaussian filter → bilateral filter → NLM, where each step is explicitly motivated by a concrete failure of the one before.
+- The **convolution formalism** here (continuous integral form, then discretized) is the signal-processing-theory version of the exact same convolution operation the architectures/representations lecture builds CNN layers from — same mathematical object, introduced first from classical image-processing motivations (denoising) here, then reused as a *learnable* feature extractor there.
 
+## Quick self-test checklist for this lecture
 
+1. Derive why averaging over time/space reduces noise without touching the true signal (the algebraic cancellation argument), and state the trade-off in choosing support size $|S|$.
+2. State the two defining properties of LTE operators (linearity, translation-equivariance) and the theorem connecting them to convolution.
+3. Write the convolution integral and identify the "reflect + translate" geometric interpretation of $h$.
+4. State convolution's four properties (associative, commutative, distributive, commutes with differentiation).
+5. Define correlation, and state precisely when/how it relates to convolution (only when $h$ is even, and only as $i*h=h*i=h\circ i$ — never $i\circ h=h\circ i$).
+6. Write discrete convolution and explain the two border-handling strategies (crop vs pad) and the four padding types (zero, replicate, reflect, reflect_101).
+7. Explain why the mean filter needs no multiplications, classify it as low-pass/smoothing, and explain precisely why uniform averaging blurs edges.
+8. Derive the Gaussian filter's $3\sigma$ kernel-size rule, the separability speed-up factor $S=k+\tfrac12$, and explain σ as a "scale" parameter.
+9. Explain why linear filters fail on impulse noise and why the median filter fixes it (and why median, in turn, fails on Gaussian noise).
+10. Write out the bilateral filter formula term by term (spatial weight, range weight, normalizer) and explain exactly why multiplying the two Gaussians achieves edge preservation.
+11. State NLM's key idea (patch similarity, global search) and recall the example hyperparameters (7×7 patch, 21×21 search window, h=10σ).
 
+Want me to merge this with the NLM material from your earlier exam paper into one consolidated, non-redundant study document covering Prof. Lisanti's filtering side of the course end-to-end?
