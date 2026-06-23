@@ -351,6 +351,10 @@ $$I'(j,i) = \max_{k=1,\ldots,C_{out}}\;\max_{l\in[0,W_K-1]}\;pool_k[I][k][(Sj+l,
 
 Common default: **2×2, stride 2, max pooling** — exactly halves spatial resolution.
 
+
+<img width="1226" height="310" alt="image" src="https://github.com/user-attachments/assets/70800d51-3e3b-4194-8912-baf33b995108" />
+
+
 ### The crucial structural difference from convolution
 
 **"Key difference with convolution: each input channel is aggregated independently — the kernel works only along the spatial dimensions, and $C_{out}=C_{in}$."** Unlike a conv filter (which sums *across* channels, mixing them together), a pooling kernel operates **separately, per channel** — it never combines information across different channels, only within a channel's own spatial footprint. This is why pooling cannot change the number of channels (whereas conv routinely does).
