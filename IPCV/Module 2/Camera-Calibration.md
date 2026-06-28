@@ -90,3 +90,60 @@ This is the grand finale. The "initial guesses" from Phase 3 are pretty good, bu
 To get perfect, sub-pixel accuracy, Zhang's method takes all the parameters ($A$, all the $R_i$'s and $t_i$'s, and the distortion coefficients $k, p$) and throws them into a giant calculus optimization engine (usually the Levenberg-Marquardt algorithm).
 
 It slightly nudges all the numbers up and down simultaneously, projecting the 3D points through the complete, non-linear image formation pipeline we learned in the last module, until the global reprojection error across all $n$ images is absolutely minimized.
+
+
+
+
+Designing the Calibration Pattern
+
+To solve the massive math problem of camera calibration, we need to feed the computer a set of perfect $(m, M_W)$ pairs.
+
+$m$ = 2D pixel coordinates (found by the computer).
+
+$M_W$ = 3D physical world coordinates (provided by us).
+
+To make this as easy as possible, we use a printed chessboard. Here are the strict rules for setting it up:
+
+1. Breaking Symmetry (The "Odd x Even" Rule)
+
+Look at the first slide. Why does the leftmost chessboard have a big red "X" over it?
+
+It is a $5 \times 5$ internal corner grid.
+
+Because it is perfectly symmetrical, if you rotate the board $90^\circ$ or $180^\circ$, it looks exactly the same.
+
+The Problem: The computer algorithm will get confused and might think the camera flipped upside down instead of the board rotating.
+
+The Solution: You must use an Odd $\times$ Even grid of internal corners (like a $9 \times 6$ board). This breaks the symmetry. No matter how you rotate the board, there is only one "top left" corner, meaning the computer can track the exact orientation (Rotation matrix $R$) perfectly.
+
+2. Physical Scale (The Ruler)
+
+A camera is just an eye; it doesn't know if it's looking at a tiny toy chessboard from 2 inches away, or a massive billboard-sized chessboard from 50 feet away. The math is identical.
+To get real-world measurements (like Translation $t$ in millimeters), you must measure the exact physical size of the printed squares (e.g., $0.6$ cm or $6$ mm) and tell the software.
+
+3. Defining the World Reference Frame ($M_W$)
+
+Look at the second slide. This is how we map out the 3D coordinates ($M_W$) for every single corner on the board without having to measure them all by hand:
+
+The Origin $(0,0,0)$: We pick one specific corner (using the asymmetric pattern to find it reliably every time) and declare that it is the exact center of the universe.
+
+The $Z=0$ Plane: Because the paper is perfectly flat, we declare that the paper is the $X-Y$ plane. This means every single corner on the board has a $Z$-coordinate of exactly $0$. (This is the trick that simplifies Zhang's method!)
+
+The $X$ and $Y$ Axes: We align the $X$-axis along the short side of the board and the $Y$-axis along the long side.
+
+The Magic Trick:
+Because we know the origin is $(0,0,0)$ and we know each square is exactly $0.6$ cm wide, the computer can automatically calculate the exact 3D world coordinate of any corner just by counting squares!
+
+Look at the yellow box in the slide. The corner is 3 squares to the right ($X$) and 6 squares down ($Y$).
+
+$X = 3 \times 0.6 = 1.8$ cm
+
+$Y = 6 \times 0.6 = 3.6$ cm
+
+$Z = 0$
+
+Final World Coordinate ($M_W$): $[1.8, 3.6, 0]^T$
+
+4. Finding the Pixels ($m$)
+
+To get the other half of the pair, the computer uses standard computer vision algorithms (like the Harris Corner Detector) on the photograph. This scans the image for high-contrast intersection points and spits out the exact 2D pixel coordinates $(u,v)$.
