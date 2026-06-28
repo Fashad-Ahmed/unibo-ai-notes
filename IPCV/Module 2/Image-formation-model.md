@@ -379,3 +379,6 @@ You now know exactly how far left/right ($X$), up/down ($Y$), and deep ($Z$) the
 *(Note: Once you have $M_c$, you are finally ready to plug it into the Intrinsic matrix ($K$) from the previous slides to flatten it into 2D pixels!)*
 
 ---
+
+
+
