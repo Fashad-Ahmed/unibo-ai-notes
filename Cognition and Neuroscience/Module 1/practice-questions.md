@@ -522,9 +522,197 @@ However, these divisions are not absolute. Complex cognition emerges from hierar
 
 
 
+---
 
+# 1. Challenges of optimal decision-making and the role of multiple learning systems
 
+## Define the core concepts
 
+Optimal decision-making involves selecting actions that maximize expected rewards and minimize punishments. This requires representing alternatives, assigning them subjective value, predicting their consequences, and choosing the option with the greatest expected benefit.
+
+A major difficulty is that outcomes are often delayed and may depend on a long sequence of actions. The **credit assignment problem** is the challenge of identifying which earlier state or action caused a later success or failure. 
+
+## Main discussion
+
+Suppose a student performs well in an examination after weeks of attending lectures, revising notes, practicing questions, sleeping adequately, and changing study techniques. The reward is delayed, and many actions contributed to it. The learner must determine which behaviors deserve credit and should be repeated.
+
+Animals address such complexity through several learning systems rather than one controller.
+
+The **Pavlovian system** learns that stimuli predict biologically significant outcomes. A cue associated with food, danger, or pain can trigger an anticipatory response. This is fast and adaptive but relatively inflexible because the response is often stereotyped.
+
+The **habitual system** learns to repeat actions that were successful in the past. Once an action has been reinforced repeatedly, it can be triggered quickly without detailed evaluation. Habits reduce computational demands, but they may persist when circumstances change.
+
+The **goal-directed system** evaluates an action according to its expected consequence and the current value of that consequence. It is flexible and can respond to changes, such as avoiding an action when its outcome is no longer desirable. However, it is slower and more computationally demanding.
+
+These systems offer different solutions to the decision problem. Pavlovian control provides rapid preparation, habitual control provides efficiency, and goal-directed control provides flexible planning. The brain must integrate or arbitrate among them to produce the response most adaptive for survival.  
+
+Reinforcement-learning mechanisms also use **prediction errors**: differences between expected and obtained outcomes. A better-than-expected outcome strengthens the values of preceding states or actions, while a worse-than-expected outcome weakens them. By propagating this information backward, learning can assign value to actions that occurred before the final reward.
+
+## Conclusion
+
+Optimal decision-making is difficult because rewards and punishments may be uncertain, delayed, or caused by several actions. Multiple systems provide complementary solutions: Pavlovian learning predicts important events, habits repeat previously successful actions, and goal-directed learning evaluates anticipated consequences. Their interaction balances speed, efficiency, and flexibility.
+
+---
+
+# 2. Pavlovian versus instrumental learning
+
+## Define the core concepts
+
+**Pavlovian conditioning** is learning an association between a stimulus and an outcome. The organism learns that one event predicts another.
+
+**Instrumental conditioning** is learning an association between an action and its consequence. The organism learns that its own behavior produces a reward or punishment.
+
+## Pavlovian learning
+
+In Pavlovian learning, a neutral stimulus is repeatedly paired with an unconditioned stimulus that naturally produces a response.
+
+For example:
+
+* food naturally causes salivation;
+* a bell is initially neutral;
+* after repeated bell–food pairings, the bell alone produces salivation.
+
+The association is:
+
+**stimulus → outcome**
+
+The response is elicited by the predictive cue and does not have to cause the outcome.
+
+An everyday example is anxiety when hearing the sound of a dentist’s drill. The sound may become associated with pain or discomfort and later trigger tension before any procedure begins. Another example is feeling hungry when seeing the logo of a familiar restaurant.
+
+Pavlovian responses are often automatic and biologically prepared. They are useful for anticipating significant events but may be difficult to suppress even when they conflict with current goals. 
+
+## Instrumental learning
+
+In instrumental learning, behavior changes according to its consequences.
+
+The association is:
+
+**action → outcome**
+
+A behavior followed by reinforcement becomes more likely, whereas a behavior followed by punishment becomes less likely.
+
+For example, a student who receives a good grade after studying may study more in the future. Fastening a seatbelt because it stops an irritating warning sound is **negative reinforcement**, since removing the unpleasant sound strengthens the behavior.
+
+Unlike Pavlovian learning, instrumental learning involves an action that influences the environment. It may be habitual, where the behavior is repeated because it was successful before, or goal-directed, where it is selected because of its expected current consequence.
+
+## Comparison
+
+Both forms are associative and allow experience to guide future behavior. However:
+
+* Pavlovian learning concerns stimulus–outcome relations.
+* Instrumental learning concerns action–outcome relations.
+* Pavlovian responses are usually elicited automatically.
+* Instrumental actions are emitted and influenced by their consequences.
+* Pavlovian responses may occur even when they are unhelpful.
+* Instrumental behavior can be modified by changing reinforcement or punishment.
+
+Experiments show that Pavlovian responses can persist even when the response prevents reward, confirming that the animal learned about the stimulus predicting food rather than about the response causing food. 
+
+## Conclusion
+
+Pavlovian learning helps organisms predict significant events and prepare automatic responses. Instrumental learning allows organisms to control outcomes through action. Everyday behavior reflects both systems, which frequently interact.
+
+---
+
+# 3. Acquisition, extinction, generalization, and discrimination
+
+## Define the core concept
+
+Pavlovian conditioning is flexible because conditioned responses are not permanently fixed. They can be acquired, reduced, generalized to similar stimuli, and restricted through discrimination.
+
+## Acquisition
+
+**Acquisition** is the initial learning of the conditioned association.
+
+A neutral stimulus becomes a conditioned stimulus through repeated pairing with an unconditioned stimulus. For example, if a tone repeatedly occurs before food, the tone eventually produces salivation.
+
+Acquisition shows that organisms can learn predictive relationships from experience. Learning is stronger when the conditioned stimulus reliably predicts the unconditioned stimulus, rather than merely occurring near it.
+
+## Extinction
+
+**Extinction** occurs when the conditioned stimulus is repeatedly presented without the unconditioned stimulus, causing the conditioned response to decline.
+
+For example, if the tone occurs repeatedly without food, salivation decreases.
+
+Extinction demonstrates flexibility because behavior adjusts when the environment changes. However, extinction is generally considered new learning rather than complete erasure of the original association. The organism learns that the conditioned stimulus no longer predicts the outcome in the current context.
+
+This is shown by the possible return of the response through spontaneous recovery, renewal in another context, or reinstatement after exposure to the unconditioned stimulus.
+
+## Generalization
+
+**Generalization** occurs when stimuli similar to the original conditioned stimulus also produce the conditioned response.
+
+For example, after being bitten by one dog, a person may initially fear other dogs.
+
+Generalization is adaptive because organisms can respond to new but related threats without learning about each stimulus separately. However, excessive generalization can be maladaptive and may contribute to anxiety.
+
+## Discrimination
+
+**Discrimination** is learning that similar stimuli predict different outcomes.
+
+For example, one tone may predict shock while another similar tone predicts safety. The organism gradually responds primarily to the dangerous tone.
+
+Discrimination prevents unnecessary responding and makes behavior more precise.
+
+## Overall interpretation
+
+These processes reveal a balance between stability and change:
+
+* acquisition forms useful predictions;
+* extinction updates predictions when contingencies change;
+* generalization transfers learning to similar situations;
+* discrimination limits responses to the most relevant cues.
+
+## Conclusion
+
+Pavlovian learning is not a rigid pairing mechanism. It allows organisms to acquire predictions, revise them, transfer them to related situations, and distinguish danger from safety. This flexibility makes behavior both efficient and adaptable.
+
+---
+
+# 4. Predictive conditioned responses and their survival value
+
+## Define the core concept
+
+A conditioned response is a learned response produced by a conditioned stimulus that predicts an unconditioned stimulus. Its defining feature is that it often occurs **before** the biologically significant event.
+
+## Predictive nature of learning
+
+Reflexes are reactive: they occur only after the triggering stimulus is present. A withdrawal reflex, for example, occurs after contact with something painful.
+
+Pavlovian learning allows a previously neutral cue to predict the event. If rustling leaves repeatedly precede the appearance of a predator, the rustling may eventually trigger fear, vigilance, or escape before the predator is directly encountered.
+
+The conditioned stimulus therefore acts as an early warning signal.
+
+The conditioned response is sometimes similar to the unconditioned response, as when a food-predicting cue causes salivation. In other cases, it is specifically preparatory. A cue predicting food may produce orientation or approach, while the food itself produces chewing. A cue predicting danger may produce freezing or escape before injury occurs. 
+
+## Why prediction is advantageous
+
+Prediction allows the organism to prepare physiological and behavioral systems in advance.
+
+For rewards, it may:
+
+* orient attention toward the reward source;
+* stimulate salivation and digestion;
+* motivate approach;
+* prepare an appropriate action.
+
+For threats, it may:
+
+* increase vigilance;
+* activate autonomic arousal;
+* initiate freezing, withdrawal, or escape;
+* reduce the probability of injury.
+
+This is more adaptive than waiting for the outcome itself. Fleeing after a predator attacks may be too late, whereas responding to an early predictive cue may prevent contact entirely.
+
+Predictive learning also conserves resources. The organism does not respond constantly to every possible event; it responds strongly when environmental cues indicate that a significant outcome is likely.
+
+However, prediction can become maladaptive if associations are inaccurate or overgeneralized. A harmless cue may produce fear because it resembles a previously dangerous stimulus.
+
+## Conclusion
+
+Conditioned responses demonstrate that learning is fundamentally predictive. Organisms use past experience to identify cues that precede rewards and punishments and then respond before those outcomes occur. This ability transforms behavior from purely reactive to anticipatory, improving preparation, avoidance, reward acquisition, and ultimately survival.
 
 
 
