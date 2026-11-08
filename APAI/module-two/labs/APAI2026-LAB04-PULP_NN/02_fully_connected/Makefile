@@ -1,0 +1,29 @@
+# APPLICATION NAME
+APP = fullyConnected
+
+# SOURCE FILES
+APP_SRCS = main.c fully_connected.c
+
+# NUMBER OF USED CLUSTER CORES
+CORES ?= 1
+SIMD ?= 1
+
+ifeq ($(SIMD),1)
+APP_CFLAGS += -DUSE_SIMD
+endif
+
+# LAYER DIMENSIONS
+# Default values in include/data_allocation.h, override with:
+# make clean all run CH_IN=<value> CH_OUT=<value>
+ifdef CH_IN
+APP_CFLAGS += -DCH_IM_IN=$(CH_IN)
+endif
+ifdef CH_OUT
+APP_CFLAGS += -DCH_IM_OUT=$(CH_OUT)
+endif
+
+# COMPILER FLAGS
+APP_CFLAGS += -O3 -Iinclude -DNUM_CORES=$(CORES)
+APP_LDFLAGS +=
+
+include $(RULES_DIR)/pmsis_rules.mk
